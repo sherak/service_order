@@ -14,10 +14,12 @@ class db_connection {
 		return $conn;
 	}
 
-	function insert_data($table, $columns, $data) {
+	function insert_data($table, $data) {
+		$columns = array_keys($data);
+		$values = array_values($data);
 	    $columns = implode(',', $columns);
-	    $data = implode("','", $data);
-	    $sql = "INSERT INTO " . $table . " (" . $columns . ") VALUES ('" . $data . "')";
+	    $values = implode("','", $values);
+	    $sql = "INSERT INTO " . $table . " (" . $columns . ") VALUES ('" . $values . "')";
 	    $conn = $this->connect();
 	    $result = mysqli_query($conn, $sql);
 	    if($result === FALSE) { 
@@ -26,7 +28,9 @@ class db_connection {
 		mysqli_close ($conn);
   	}
 
-  	function update_data($table, $columns, $values, $column_id) {
+  	function update_data($table, $data, $column_id) {
+  		$columns = array_keys($data);
+		$values = array_values($data);
   		$column_value = '';
   		foreach(array_combine($columns, $values) as $column => $value) {
   			$column_value .= $column . "=" . "'" . $value;
@@ -45,9 +49,7 @@ class db_connection {
 		mysqli_close ($conn);
   	}
 
-  	function select_data($table, $columns, $column_id) {
-	    $columns = implode(',', $columns);
-	    $sql = "SELECT " . $columns . " FROM " . $table . " WHERE " . $table . "." . $table . "_id=" . $column_id;
+  	function query($sql) {
 	    $conn = $this->connect();
 	    $result = mysqli_query($conn, $sql);
 	    if($result === FALSE) { 
@@ -66,16 +68,20 @@ class db_connection {
 }
 
 $c = new db_connection();
-$columns = array("name", "surname", "email", "password", "gender");
 
-$data = array("Simone", "Herak", "herak4@gmail.com", "sherak", "M");
-$c->insert_data('user', $columns, $data);
+$c->insert_data('user', [
+  'name' => 'Simone',
+  'surname' => 'Herak',
+  'email' => 'herak4@gmail.com',
+  'password' => 'sherak',
+  'gender' => 'M'
+]);
 
-$value = array("Mario", "Marić", "mario.maric@gmail.com", "mmaric", "M");
 $user_id = 7;
-$c->update_data('user', $columns, $value, $user_id);
-
-$table_data = $c->select_data('user', $columns, $user_id);
-foreach ($table_data as $key => $val) {
-	echo $key . " = " . $val ."<br>";
-}
+$c->update_data('user', [
+  'name' => 'Mario',
+  'surname' => 'Marić',
+  'email' => 'mario.maric@gmail.com',
+  'password' => 'mmaric',
+  'gender' => 'M'
+], $user_id);

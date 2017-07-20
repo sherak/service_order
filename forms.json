@@ -2,15 +2,15 @@
     "login": [
             { "name":"email", "label":"Email Address", "type":"email", "required":true },
             { "name":"password", "label":"Password", "type":"password", "required":true },
-            { "name":"button", "value":"Sign in", "type":"button"}
+            { "name":"button", "label":"", "value":"Sign in", "type":"button"}
     ],
     "register": [
+            { "label":"", "type":"row-spacer" },
             { "name":"firstname", "label":"First Name", "type":"string", "required":true },
             { "name":"lastname", "label":"Last Name", "type":"string", "required":true },
-            { "type":"row-spacer" },
             { "name":"email", "label":"Email Address", "type":"email", "required":true },
             { "name":"password", "label":"Password", "type":"password", "required":true },
-            { "name":"password_rpt", "label":"Repeat Password", "typ":"password_rpt", "required":true },
-            { "name":"button", "value":"Sign up", "type":"button"}
+            { "name":"password_rpt", "label":"Repeat Password", "type":"password_rpt", "required":true },
+            { "name":"button", "label":"", "value":"Sign up", "type":"button"}
     ]
 }

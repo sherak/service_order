@@ -5,9 +5,9 @@ class html_form {
     private $tag;
     private $html;
     
-    function __construct($form_name) {
+    /*function __construct($form_name) {
         $this->form_name = $form_name;
-    }
+    }*/
 
     function add_attributes($attr_ar) {
         $str = '';
@@ -74,7 +74,7 @@ class html_form {
             $header=NULL, $attr_ar=array()) {
         $str = "<select name=\"$name\"";
         if($attr_ar) {
-            $str .= $this->add_attributes( $attr_ar );
+            $str .= $this->add_attributes($attr_ar);
         }
         $str .= ">\n";
         if(isset($header)) {
@@ -127,26 +127,23 @@ class html_form {
         return "</form>";
     }
 
-    function getHtml() {
-        $str = file_get_contents('forms.json');
-        $json = json_decode($str, true);
-        if($this->form_name == 'login') {
-            $str = $this->add_input($json['login'][0]['type'], $json['login'][0]['name'], '', array('required' => $json['login'][0]['required']));
-            $str .= $this->add_input($json['login'][1]['type'], $json['login'][1]['name'], '', array('required' => $json['login'][1]['required']));
-            $str .= $this->add_button($json['login'][2]['type'], $json['login'][2]['name'], $json['login'][2]['value']);
-            return $str;
+    function getHtml($form_name) {
+        $json = file_get_contents('forms.json');
+        $json = json_decode($json, true);
+        $str = '';
+        foreach ($json[$form_name] as $json) {
+            $str .= $json['label'];
+            if($json['type'] == 'email' or $json['type'] == 'password' or $json['type'] == 'password_rpt' or $json['type'] == 'string')
+                $str .= $this->add_input($json['type'], $json['name'], '', array('required' => $json['required']));
+            else if($json['type'] == 'button')
+                $str .= $this->add_button($json['type'], $json['name'], $json['value']);
+            $str .= '</br>';
         }
-        else if($this->form_name == 'register') {
-            $str = $this->add_input($json['register'][0]['type'], $json['register'][0]['name'], '', array('register' => $json['login'][0]['required']));
-            $str .= $this->add_input($json['register'][1]['type'], $json['register'][1]['name'], '', array('register' => $json['login'][1]['required']));
-            $str .= $this->add_button($json['register'][6]['type'], $json['register'][6]['name'], $json['register'][6]['value']);
-            return $str;
-        }
+        return $str;
     }
-    
+
 }
 
-$x = new html_form('login');
-echo $x->getHtml();
-$x = new html_form('register');
-echo $x->getHtml();
+$x = new html_form();                          
+echo $x->getHtml('login');
+echo $x->getHtml('register');

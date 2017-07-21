@@ -19,3 +19,4 @@ if(empty($row))
 else if($row['email'] == $email and $row['password'] == $password)
 	echo "Login success! Welcome " . $row['name'];
 	
+require 'my_account.php';

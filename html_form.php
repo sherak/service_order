@@ -126,13 +126,17 @@ class html_form {
     function getHtml($form_name) {
         $json = file_get_contents('forms.json');
         $json = json_decode($json, true);
+        # TODO: connect $option_list with database 
+        $option_list = array("Rijeka" => 'Rijeka', "Zagreb" => 'Zagreb', "Split" => 'Split', "Osijek" => 'Osijek');
         $str = $this->start_form($form_name . '.php');
-        foreach ($json[$form_name] as $json) {
+        foreach($json[$form_name] as $json) {
             $str .= $json['label'];
             if($json['type'] == 'email' or $json['type'] == 'password' or $json['type'] == 'password_rpt' or $json['type'] == 'string' or $json['type'] == 'radio')
                 $str .= $this->add_input($json['type'], $json['name'], $json['value'], array('required' => $json['required']));
             else if($json['type'] == 'submit')
                 $str .= $this->add_button($json['type'], $json['name'], $json['value']);
+            else if($json['type'] == 'select')
+                $str .= $this->add_select_list($json['type'], $option_list);
             $str .= '</br>';
         }
         $str .= $this->end_form();
@@ -140,7 +144,3 @@ class html_form {
     }
 
 }
-
-$x = new html_form();                          
-echo $x->getHtml('login');
-echo $x->getHtml('register');

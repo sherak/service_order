@@ -5,10 +5,6 @@ class html_form {
     private $tag;
     private $html;
     
-    /*function __construct($form_name) {
-        $this->form_name = $form_name;
-    }*/
-
     function add_attributes($attr_ar) {
         $str = '';
         // check minimized (boolean) attributes
@@ -130,15 +126,16 @@ class html_form {
     function getHtml($form_name) {
         $json = file_get_contents('forms.json');
         $json = json_decode($json, true);
-        $str = '';
+        $str = $this->start_form($form_name . '.php');
         foreach ($json[$form_name] as $json) {
             $str .= $json['label'];
-            if($json['type'] == 'email' or $json['type'] == 'password' or $json['type'] == 'password_rpt' or $json['type'] == 'string')
-                $str .= $this->add_input($json['type'], $json['name'], '', array('required' => $json['required']));
-            else if($json['type'] == 'button')
+            if($json['type'] == 'email' or $json['type'] == 'password' or $json['type'] == 'password_rpt' or $json['type'] == 'string' or $json['type'] == 'radio')
+                $str .= $this->add_input($json['type'], $json['name'], $json['value'], array('required' => $json['required']));
+            else if($json['type'] == 'submit')
                 $str .= $this->add_button($json['type'], $json['name'], $json['value']);
             $str .= '</br>';
         }
+        $str .= $this->end_form();
         return $str;
     }
 

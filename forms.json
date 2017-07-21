@@ -1,16 +1,18 @@
 {
     "login": [
-            { "name":"email", "label":"Email Address", "type":"email", "required":true },
-            { "name":"password", "label":"Password", "type":"password", "required":true },
-            { "name":"button", "label":"", "value":"Sign in", "type":"button"}
+            { "name":"email", "label":"Email Address", "value":"", "type":"email", "required":true },
+            { "name":"password", "label":"Password", "value":"", "type":"password", "required":true },
+            { "name":"button", "label":"", "value":"Sign in", "type":"submit"}
     ],
     "register": [
             { "label":"", "type":"row-spacer" },
-            { "name":"firstname", "label":"First Name", "type":"string", "required":true },
-            { "name":"lastname", "label":"Last Name", "type":"string", "required":true },
-            { "name":"email", "label":"Email Address", "type":"email", "required":true },
-            { "name":"password", "label":"Password", "type":"password", "required":true },
-            { "name":"password_rpt", "label":"Repeat Password", "type":"password_rpt", "required":true },
-            { "name":"button", "label":"", "value":"Sign up", "type":"button"}
+            { "name":"firstname", "label":"First Name", "value":"", "type":"string", "required":true },
+            { "name":"lastname", "label":"Last Name", "value":"", "type":"string", "required":true },
+            { "name":"email", "label":"Email Address", "value":"", "type":"email", "required":true },
+            { "name":"password", "label":"Password", "value":"", "type":"password", "required":true },
+            { "name":"password_rpt", "label":"Repeat Password", "value":"", "type":"password_rpt", "required":true },
+            { "name":"gender", "label":"Male", "value":"M", "type":"radio", "required":true },
+            { "name":"gender", "label":"Female", "value":"F", "type":"radio", "required":true },
+            { "name":"button", "label":"", "value":"Sign up", "type":"submit"}
     ]
 }

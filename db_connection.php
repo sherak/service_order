@@ -15,11 +15,13 @@ class db_connection {
 	}
 
 	function insert_data($table, $data) {
+		if(in_array("", $data))
+			return False;
 		$columns = array_keys($data);
 		$values = array_values($data);
-	    $columns = implode(',', $columns);
-	    $values = implode("','", $values);
-	    $sql = "INSERT INTO " . $table . " (" . $columns . ") VALUES ('" . $values . "')";
+    	$columns = implode(',', $columns);
+    	$values = implode("','", $values);
+    	$sql = "INSERT INTO " . $table . " (" . $columns . ") VALUES ('" . $values . "')";
 	    $conn = $this->connect();
 	    $result = mysqli_query($conn, $sql);
 	    if($result === FALSE) { 
@@ -39,7 +41,6 @@ class db_connection {
        		else
        			$column_value .= "',";
        	}
-       	// TODO: change code structure
 	    $sql = "UPDATE" . " " . $table . " SET " . $column_value . " WHERE " . $table . "." . $table . "_id=" . $column_id;
 	    $conn = $this->connect();
 	    $result = mysqli_query($conn, $sql);
@@ -67,7 +68,7 @@ class db_connection {
 
 }
 
-$c = new db_connection();
+/*$c = new db_connection();
 
 $c->insert_data('user', [
   'name' => 'Simone',
@@ -84,4 +85,4 @@ $c->update_data('user', [
   'email' => 'mario.maric@gmail.com',
   'password' => 'mmaric',
   'gender' => 'M'
-], $user_id);
+], $user_id);*/

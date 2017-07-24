@@ -2,13 +2,13 @@
 	
 require 'db_connection.php';
 
-$firstname = ''; 
-$firstname = isset($_POST['firstname']) ? $_POST['firstname'] : '';
-$firstname = !empty($_POST['firstname']) ? $_POST['firstname'] : '';
+$name = ''; 
+$name = isset($_POST['name']) ? $_POST['name'] : '';
+$name = !empty($_POST['name']) ? $_POST['name'] : '';
 
-$lastname = ''; 
-$lastname = isset($_POST['lastname']) ? $_POST['lastname'] : '';
-$lastname = !empty($_POST['lastname']) ? $_POST['lastname'] : '';
+$surname = ''; 
+$surname = isset($_POST['name']) ? $_POST['name'] : '';
+$surname = !empty($_POST['name']) ? $_POST['name'] : '';
 
 $email = ''; 
 $email = isset($_POST['email']) ? $_POST['email'] : '';
@@ -30,7 +30,7 @@ if(!empty($row)) {
 	echo "Email already exists!";
 }
 else {
-	$data = array("name" => $firstname, "surname" => $lastname, "email" => $email, "password" => $password, "gender" => $gender);
+	$data = array("name" => $name, "surname" => $surname, "email" => $email, "password" => $password, "gender" => $gender);
 	$c->insert_data('user', $data);
 	echo "Register success!";
 }

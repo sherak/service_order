@@ -47,7 +47,9 @@ class db_connection {
 	    if($result === FALSE) { 
     		die(mysqli_error($conn));
 		}
+		$affected_rows = mysqli_affected_rows($conn);
 		mysqli_close ($conn);
+		return $affected_rows;
   	}
 
   	function query($sql) {

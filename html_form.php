@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 class html_form {
     
     private $tag;
@@ -130,13 +132,23 @@ class html_form {
         $option_list = array("Rijeka" => 'Rijeka', "Zagreb" => 'Zagreb', "Split" => 'Split', "Osijek" => 'Osijek');
         $str = $this->start_form($form_name . '.php');
         foreach($json[$form_name] as $json) {
+            $checked = '';
+            # TODO: better checking for editing profile
+            if(isset($_SESSION['user']) and $form_name == 'edit_profile') {
+                $user = $_SESSION['user'];
+                # TODO: password unhashing
+                if($json['type'] != 'radio')
+                    $json['value'] = isset($user[$json['name']]) ? $user[$json['name']] : $json['value'];
+                else
+                    $checked =  $user[$json['name']] == $json['value']  ? 'checked' : '';
+            }
             $str .= $json['label'];
-            if($json['type'] == 'email' or $json['type'] == 'password' or $json['type'] == 'password_rpt' or $json['type'] == 'string' or $json['type'] == 'radio')
-                $str .= $this->add_input($json['type'], $json['name'], $json['value'], array('required' => $json['required']));
-            else if($json['type'] == 'submit')
+            if($json['type'] == 'submit')
                 $str .= $this->add_button($json['type'], $json['name'], $json['value']);
             else if($json['type'] == 'select')
                 $str .= $this->add_select_list($json['type'], $option_list);
+            else 
+                $str .= $this->add_input($json['type'], $json['name'], $json['value'], array('required' => $json['required'], $checked => $checked));
             $str .= '</br>';
         }
         $str .= $this->end_form();

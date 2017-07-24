@@ -18,5 +18,7 @@ if(empty($row))
    echo "Failed to login!";
 else if($row['email'] == $email and $row['password'] == $password)
 	echo "Login success! Welcome " . $row['name'];
-	
+
+$_SESSION['user'] = $row;
+
 require 'my_account.php';

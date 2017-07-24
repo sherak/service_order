@@ -49,3 +49,10 @@ if(isset($_SESSION['user']) and isset($_POST['button'])) {
 	else
 		echo 'Update failed!';
 }
+
+$tag = 'a';
+$attr_ar = array("href" => "my_account.php");
+$str = $x->start_tag($tag, $attr_ar);
+$str .= 'Back';
+$str .= $x->end_tag($tag);
+echo $str;

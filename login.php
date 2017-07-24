@@ -14,11 +14,11 @@ $password = sha1($password);
 $c = new db_connection();
 $sql = "SELECT * FROM user WHERE email = '$email' AND password = '$password'" or die("Failed to query database" . mysql_error());
 $row = $c->query($sql);
-if(empty($row))
-   echo "Failed to login!";
-else if($row['email'] == $email and $row['password'] == $password)
-	echo "Login success! Welcome " . $row['name'];
-
-$_SESSION['user'] = $row;
-
-require 'my_account.php';
+if(empty($row)) {
+	$login_alert = 'Failed to login!';
+   	header("Location: index.php?login_alert={$login_alert}");
+}
+else if($row['email'] == $email and $row['password'] == $password) {
+	echo 'Login success! Welcome ' . $row['name'];
+	require 'my_account.php';
+}

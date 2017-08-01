@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+require 'db_connection.php';
 
 class html_form {
     
@@ -78,9 +78,9 @@ class html_form {
         if(isset($header)) {
             $str .= "  <option value=\"\">$header</option>\n";
         }
-        foreach ($option_list as $val => $text) {
+        foreach($option_list as $val => $text) {
             $str .= $check_val ? "  <option value=\"$val\"": "  <option";
-            if(isset($selected_value) && ( $selected_value === $val || $selected_value === $text)) {
+            if(isset($selected_value) && ($selected_value === $val || $selected_value === $text)) {
                 $str .= ' selected';
             }
             $str .= ">$text</option>\n";
@@ -125,12 +125,17 @@ class html_form {
         return "</form>";
     }
 
-    function getHtml($form_name) {
+    function getHtml($form_name, $method='post') {
         $json = file_get_contents('forms.json');
         $json = json_decode($json, true);
-        # TODO: connect $option_list with database 
-        $option_list = array("Rijeka" => 'Rijeka', "Zagreb" => 'Zagreb', "Split" => 'Split', "Osijek" => 'Osijek');
-        $str = $this->start_form($form_name . '.php');
+        $c = new db_connection();
+        $sql = "SELECT city FROM service_provider";
+        $option_list = $c->query($sql);
+        $cities_arr = array();
+        foreach($option_list as $key => $value) {
+            $cities_arr[$value[key($value)]] = $value[key($value)]; 
+        }
+        $str = $method == 'get' ? $this->start_form($form_name . '.php', $method) : $this->start_form($form_name . '.php');
         foreach($json[$form_name] as $json) {
             $checked = '';
             # TODO: better checking for editing profile
@@ -145,10 +150,14 @@ class html_form {
             $str .= $json['label'];
             if($json['type'] == 'submit')
                 $str .= $this->add_button($json['type'], $json['name'], $json['value']);
-            else if($json['type'] == 'select')
-                $str .= $this->add_select_list($json['type'], $option_list);
+            else if($json['type'] == 'select') {
+                $str .= $this->add_select_list($json['name'], $cities_arr);
+            }
+            else if($json['type'] == 'textarea') {
+                $str .= $this->add_textarea($json['name']);
+            }
             else 
-                $str .= $this->add_input($json['type'], $json['name'], $json['value'], array('required' => $json['required'], $checked => $checked));
+                $str .= $this->add_input($json['type'], $json['name'], $json['value'], array('id' => $json['name'], 'required' => $json['required'], $checked => $checked));
             $str .= '</br>';
         }
         $str .= $this->end_form();

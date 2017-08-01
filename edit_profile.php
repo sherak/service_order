@@ -1,13 +1,13 @@
 <?php
 
+session_start();
+
 require 'html_form.php';
-require 'db_connection.php';
 
 $x = new html_form();                          
 echo $x->getHtml('edit_profile');
 
-if(isset($_SESSION['user']) and isset($_POST['button'])) {
-	$c = new db_connection();
+if(isset($_SESSION['user']) and isset($_POST['edit_profile_btn'])) {
 	$name = ''; 
 	$name = isset($_POST['name']) ? $_POST['name'] : '';
 	$name = !empty($_POST['name']) ? $_POST['name'] : '';
@@ -32,6 +32,8 @@ if(isset($_SESSION['user']) and isset($_POST['button'])) {
 	$user = $_SESSION['user'];
 	$user_id = $user['user_id'];
 
+	$c = new db_connection();
+
 	$affected_rows = $c->update_data('user', [
 	  'name' => $name,
 	  'surname' => $surname,
@@ -39,6 +41,9 @@ if(isset($_SESSION['user']) and isset($_POST['button'])) {
 	  'password' => $password,
 	  'gender' => $gender
 	], $user_id);
+
+	$data = array("name" => $name, "surname" => $surname, "email" => $email, "password" => $password, "gender" => $gender);
+		$c->insert_data('user', $data);
 
 	if($affected_rows == 1) {
 		echo 'Successfully updated!';

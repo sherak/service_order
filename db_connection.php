@@ -27,7 +27,9 @@ class db_connection {
 	    if($result === FALSE) { 
     		die(mysqli_error($conn));
 		}
+		$last_id = mysqli_insert_id($conn);
 		mysqli_close ($conn);
+		return $last_id;
   	}
 
   	function update_data($table, $data, $column_id) {
@@ -59,12 +61,7 @@ class db_connection {
     		die(mysqli_error($conn));
 		}
 		else {
-			$table_data = array();
-			while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-				$table_data += $row;
-			}
-			mysqli_close ($conn);
-			return $table_data;
+			return mysqli_fetch_all($result, MYSQLI_ASSOC);
 		}
   	}
 

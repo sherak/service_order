@@ -1,5 +1,7 @@
 <?php
-	
+
+session_start();
+
 require 'db_connection.php';
 
 $email = ''; 
@@ -13,12 +15,12 @@ $password = sha1($password);
 
 $c = new db_connection();
 $sql = "SELECT * FROM user WHERE email = '$email' AND password = '$password'" or die("Failed to query database" . mysql_error());
-$row = $c->query($sql);
+$row = $c->query($sql)[0];
+$_SESSION['user'] = $row;
 if(empty($row)) {
 	$login_alert = 'Failed to login!';
    	header("Location: index.php?login_alert={$login_alert}");
 }
 else if($row['email'] == $email and $row['password'] == $password) {
-	echo 'Login success! Welcome ' . $row['name'];
-	require 'my_account.php';
+	header("Location: my_account.php");
 }

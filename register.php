@@ -2,7 +2,7 @@
 	
 require 'db_connection.php';
 
-if(isset($_POST['button'])) {
+if(isset($_POST['register_btn'])) {
 	$name = ''; 
 	$name = isset($_POST['name']) ? $_POST['name'] : '';
 	$name = !empty($_POST['name']) ? $_POST['name'] : '';

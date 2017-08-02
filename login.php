@@ -4,8 +4,8 @@ session_start();
 
 require 'db_connection.php';
 
-$email = !empty($_POST['email']) ? $_POST['email'] : '';
-$password = !empty($_POST['password']) ? $_POST['password'] : '';
+$email = !empty($_POST['email']) ? htmlentities(stripslashes($_POST['email'])) : '';
+$password = !empty($_POST['password']) ? htmlentities(stripslashes($_POST['password'])) : '';
 $password = sha1($password);
 
 $c = new db_connection();

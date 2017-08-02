@@ -8,12 +8,12 @@ $x = new html_form();
 echo $x->getHtml('edit_profile');
 
 if(isset($_SESSION['user']) and isset($_POST['edit_profile_btn'])) {
-	$name = !empty($_POST['name']) ? $_POST['name'] : '';
-	$surname = !empty($_POST['name']) ? $_POST['name'] : '';
-	$email = !empty($_POST['email']) ? $_POST['email'] : '';
-	$password = !empty($_POST['password']) ? $_POST['password'] : '';
+	$name = !empty($_POST['name']) ? htmlentities(stripslashes($_POST['name'])) : '';
+	$surname = !empty($_POST['name']) ? htmlentities(stripslashes($_POST['name'])) : '';
+	$email = !empty($_POST['email']) ? htmlentities(stripslashes($_POST['email'])) : '';
+	$password = !empty($_POST['password']) ? htmlentities(stripslashes($_POST['password'])) : '';
 	$password = sha1($password);
-	$gender = !empty($_POST['gender']) ? $_POST['gender'] : '';
+	$gender = !empty($_POST['gender']) ? htmlentities(stripslashes($_POST['gender'])) : '';
 
 	$user = $_SESSION['user'];
 	$user_id = $user['user_id'];

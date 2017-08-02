@@ -35,12 +35,7 @@ if(preg_match("/[^\040\pL\pN_-]/u", $term)) {
  	exit;
 }
 
-$city = ''; 
-$city = isset($_GET['city']) ? $_GET['city'] : '';
 $city = !empty($_GET['city']) ? $_GET['city'] : '';
-
-$quart = ''; 
-$quart = isset($_GET['quart']) ? $_GET['quart'] : '';
 $quart = !empty($_GET['quart']) ? $_GET['quart'] : '';
 
 $c = new db_connection();
@@ -52,7 +47,7 @@ foreach ($data as $key => $value) {
 	$a_json[] = $value['type'];	
 }
 $a_json = array_values(array_unique($a_json));
-$sql = "SELECT * FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') AND (city = '$city') ORDER BY category, type" or die("Failed to query database" . mysql_error());
+$sql = "SELECT * FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') AND (city = '$city') ORDER BY category, type";
 // TODO: add implementation for quart
 if($data = $c->query($sql)) {
 	$categories = array();

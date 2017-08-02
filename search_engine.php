@@ -15,7 +15,7 @@ if(!$isAjax) {
 }
 ini_set('display_errors',1);*/
 
-if (!isset($_REQUEST['term_autocomplete'])) 
+if(!isset($_REQUEST['term_autocomplete'])) 
 	exit;
 
 // retrieve the search term that autocomplete sends 

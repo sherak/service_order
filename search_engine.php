@@ -65,7 +65,7 @@ if($data = $c->query($sql)) {
 		array_push($types, $value['type']);
 		$city = $value['city'];
 		$quart = $value['city'];
-		array_push($service_providers, array('name' => $value['name'], 'surname' => $value['surname'], 'work_address' => $value['work_address'], 'city' => $value['city'], 'country' => $value['country']));
+		array_push($service_providers, array('user_id' => $value['user_id'],'name' => $value['name'], 'surname' => $value['surname'], 'work_address' => $value['work_address'], 'city' => $value['city'], 'country' => $value['country']));
 	}
 	echo '<b>You searched for:</b><br>';
 	echo 'Category: ';
@@ -97,7 +97,7 @@ if($data = $c->query($sql)) {
 		echo 'City: ' . $value['city'] . '<br>';
 		echo 'Country: ' . $value['country'] . '<br>';
 		$tag = 'a';
-		$attr_ar = array("href" => "service_provider_details.php");
+		$attr_ar = array("href" => "service_provider_details.php?user_id=" . $value['user_id']);
 		$str = $x->start_tag($tag, $attr_ar);
 		$str .= 'Show profile';
 		$str .= $x->end_tag($tag);

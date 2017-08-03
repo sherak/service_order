@@ -52,5 +52,9 @@
             { "name":"stars", "label":"Good", "value":"4", "type":"radio", "required":true },
             { "name":"stars", "label":"Excellent", "value":"5", "type":"radio", "required":true },
             { "name":"add_comment_btn", "label":"", "value":"Comment and evaluate", "type":"submit" }
+    ],    
+    "add_post": [
+            { "name":"content", "label":"Content", "value":"", "type":"string", "required":true },
+            { "name":"add_post_btn", "label":"", "value":"Post", "type":"submit" }
     ]    
 }

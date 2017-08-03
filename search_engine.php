@@ -111,5 +111,5 @@ $str .= 'Back';
 $str .= $x->end_tag($tag);
 echo $str;
 
-echo json_encode($a_json);
+json_encode($a_json);
 flush();

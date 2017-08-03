@@ -9,12 +9,10 @@ $x = new html_form();
 $c = new db_connection();
 
 $_SESSION['sp_id'] = 0;
-$_SESSION['previous_location'] = $_SERVER['REQUEST_URI'];
+$_SESSION['previous_location_search_engine'] = $_SERVER['REQUEST_URI'];
 
 if(isset($_GET['user_id'])) {
 	$user_id = $_GET['user_id'];
-	$sql = "SELECT * FROM comment INNER JOIN user ON user.user_id = comment.fk_user_id";
-	$comments = $c->query($sql);
 	$sql = "SELECT sp_id, fk_occupation_id FROM service_provider WHERE fk_user_id = " . $user_id;
 	$sp_id = $c->query($sql)[0]['sp_id'];
 	$_SESSION['sp_id'] = $sp_id;
@@ -50,6 +48,8 @@ if(isset($_GET['user_id'])) {
 	require 'header.php';
 
 	echo '<br><b>Comments</b><br>';
+	$sql = "SELECT * FROM comment INNER JOIN user ON user.user_id = comment.fk_user_id WHERE comment.fk_sp_id = '$sp_id'";
+	$comments = $c->query($sql);
 	foreach ($comments as $key => $value) {
 		echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
 		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
@@ -59,7 +59,7 @@ if(isset($_GET['user_id'])) {
 	else
 		echo 'You have to sign to write comments.';
 
-	if(!empty( $_REQUEST['comment_alert'] ) )
+	if(!empty($_REQUEST['comment_alert']))
 	{
     echo sprintf( '<p>%s</p>', $_REQUEST['comment_alert'] );
 	}

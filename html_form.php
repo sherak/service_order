@@ -125,7 +125,7 @@ class html_form {
         return "</form>";
     }
 
-    function getHtml($form_name, $method='post') {
+    function getHtml($form_name, $method='post', $new_line=true) {
         $json = file_get_contents('forms.json');
         $json = json_decode($json, true);
         $c = new db_connection();
@@ -158,7 +158,8 @@ class html_form {
             }
             else 
                 $str .= $this->add_input($json['type'], $json['name'], $json['value'], array('id' => $json['name'], 'required' => $json['required'], $checked => $checked));
-            $str .= '</br>';
+            if($new_line)
+                $str .= '</br>';
         }
         $str .= $this->end_form();
         return $str;

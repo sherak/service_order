@@ -27,9 +27,33 @@ if(isset($_GET['user_id'])) {
 	echo 'Country: ' . $profile_details['country'] . '<br>';
 	echo 'Email: ' . $profile_details['email'] . '<br>';
 	echo 'Phone number: ' . $profile_details['phone_number'] . '<br>';
+	// TODO: involve js
+	if(isset($_POST['follow'])) {
+		$datetime = date("Y-m-d H:i:s");
+		$user_id = $_SESSION['user']['user_id'];
+		$data = array("datetime" => $datetime, "fk_sp_id" => $sp_id, "fk_user_id" => $user_id);
+		$c->insert_data('follow', $data);	
+		echo '<form action="" method="post">';
+		echo "<input id='follow_btn' type='submit' name='unfollow' value='unfollow'/>";
+		echo '</form>';
+	}
+	else if(isset($_POST['unfollow'])) {
+		$user_id = $_SESSION['user']['user_id'];
+		$sql = "SELECT follow_id FROM follow WHERE fk_sp_id = '$sp_id' AND fk_user_id = '$user_id'";
+		$follow_id = $c->query($sql)[0]['follow_id'];
+		$sql = "DELETE FROM follow WHERE follow_id = '$follow_id'";
+		$c->query($sql);
+		echo '<form action="" method="post">';
+		echo "<input id='follow_btn' type='submit' name='follow' value='follow'/>";
+		echo '</form>';
+	}
+	else {
+		echo '<form action="" method="post">';
+		echo "<input id='follow_btn' type='submit' name='follow' value='follow' />";
+		echo '</form>';
+	}
 	echo '<br>';
 
-	# TODO: add implementation for posts
 	echo '<div id="nav">';
     echo '<a href="#general">General</a>&nbsp';
     echo '<a href="#posts">Posts</a>&nbsp';
@@ -42,10 +66,14 @@ if(isset($_GET['user_id'])) {
 	$purchase_str .= 'Price: ' . $profile_details['price'] . '<br>'; 
 
 	echo '<div id="general" class="toggle" style="display:block">' . $general_str . '</div>'; 
-	echo '<div id="posts" class="toggle" style="display:none">Test</div>';
+	$sql = "SELECT * FROM post WHERE fk_sp_id = '$sp_id'";
+	$posts = $c->query($sql);
+	echo '<div id="posts" class="toggle" style="display:none">';
+	foreach ($posts as $key => $value) {
+		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
+	}
+	echo '</div>';
 	echo '<div id="purchase" class="toggle" style="display:none">' . $purchase_str . '</div>';	
-
-	require 'header.php';
 
 	echo '<br><b>Comments</b><br>';
 	$sql = "SELECT * FROM comment INNER JOIN user ON user.user_id = comment.fk_user_id WHERE comment.fk_sp_id = '$sp_id'";
@@ -64,3 +92,5 @@ if(isset($_GET['user_id'])) {
     echo sprintf( '<p>%s</p>', $_REQUEST['comment_alert'] );
 	}
 }
+
+require 'header.php';

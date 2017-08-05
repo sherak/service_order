@@ -28,6 +28,14 @@ echo '<a href="#service">Provide your service</a><br>';
 echo '</div>';
 
 echo '<div id="news_feed" class="toggle" style="display:block">';
+$c = new db_connection();
+$user_id = $_SESSION['user']['user_id'];
+$sql = "SELECT * FROM follow INNER JOIN post on post.fk_sp_id = follow.fk_sp_id INNER JOIN service_provider ON service_provider.sp_id = follow.fk_sp_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE follow.fk_user_id = '$user_id'";
+$followers = $c->query($sql);
+foreach ($followers as $key => $value) {
+	echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
+	echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
+}
 echo $x->getHtml('add_post');
 if(isset($_SESSION['user']) and isset($_POST['add_post_btn'])) {
 	header("Location: add_post.php");

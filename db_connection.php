@@ -57,10 +57,13 @@ class db_connection {
   	function query($sql) {
 	    $conn = $this->connect();
 	    $result = mysqli_query($conn, $sql);
+	    $delete_query = explode(' ', trim($sql))[0];
 	    if($result === FALSE) { 
     		die(mysqli_error($conn));
 		}
 		else {
+			if($delete_query == 'DELETE')
+				return true;
 			return mysqli_fetch_all($result, MYSQLI_ASSOC);
 		}
   	}

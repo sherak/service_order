@@ -6,8 +6,8 @@ require 'db_connection.php';
 
 if(isset($_POST['add_comment_btn'])) {
 	$c = new db_connection();
-	$content = $_POST['content'];
-	$stars = $_POST['stars'];
+	$content = !empty($_POST['content']) ? htmlentities(stripslashes($_POST['content'])) : '';
+	$stars = !empty($_POST['stars']) ? htmlentities(stripslashes($_POST['stars'])) : 0;
 	$datetime = date("Y-m-d H:i:s");
 	$sp_id = $_SESSION['sp_id'];
 	$user_id = $_SESSION['user']['user_id'];

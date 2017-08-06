@@ -164,5 +164,4 @@ class html_form {
         $str .= $this->end_form();
         return $str;
     }
-
 }

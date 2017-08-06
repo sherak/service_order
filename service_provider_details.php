@@ -48,9 +48,14 @@ if(isset($_GET['user_id'])) {
 		echo '</form>';
 	}
 	else {
-		echo '<form action="" method="post">';
-		echo "<input id='follow_btn' type='submit' name='follow' value='follow' />";
-		echo '</form>';
+		$user_id = $_SESSION['user']['user_id'];
+		$sql = "SELECT fk_user_id FROM service_provider WHERE sp_id = '$sp_id'";
+		$fk_user_id = $c->query($sql)[0]['fk_user_id'];
+		if($user_id != $fk_user_id) {
+			echo '<form action="" method="post">';
+			echo "<input id='follow_btn' type='submit' name='follow' value='follow' />";
+			echo '</form>';
+		}
 	}
 	echo '<br>';
 

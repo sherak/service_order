@@ -34,3 +34,4 @@ echo $x->getHtml('search_engine', 'get');
 if(isset($_GET['search_engine_btn'])) {
 	header("Location: search_engine.php");
 }
+

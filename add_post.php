@@ -11,7 +11,6 @@ $user_id = $_SESSION['user']['user_id'];
 $sql = "SELECT sp_id FROM service_provider WHERE fk_user_id = '$user_id'";
 $sp_id = $c->query($sql)[0]['sp_id'];
 $data = array("content" => $content, "datetime" => $datetime, "fk_sp_id" => $sp_id);
-$c->insert_data('post', $data);
 if($c->insert_data('post', $data)) {
 	$comment_alert = 'Post successfully added!';
 	header("Location: my_account.php?comment_alert={$comment_alert}");

@@ -32,14 +32,24 @@ $c = new db_connection();
 $user_id = $_SESSION['user']['user_id'];
 $sql = "SELECT * FROM follow INNER JOIN post on post.fk_sp_id = follow.fk_sp_id INNER JOIN service_provider ON service_provider.sp_id = follow.fk_sp_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE follow.fk_user_id = '$user_id'";
 $followers = $c->query($sql);
-foreach ($followers as $key => $value) {
-	echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
-	echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
+if(!empty($followers)) {
+	foreach ($followers as $key => $value) {
+		echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
+		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
+	}
 }
-echo $x->getHtml('add_post');
-if(isset($_SESSION['user']) and isset($_POST['add_post_btn'])) {
-	header("Location: add_post.php");
-} 
+$sql = "SELECT sp_id FROM service_provider WHERE fk_user_id = '$user_id'";
+$sp_id = $c->query($sql);
+if(!empty($sp_id)) {
+	echo $x->getHtml('add_post');
+	if(isset($_SESSION['user']) and isset($_POST['add_post_btn'])) {
+		header("Location: add_post.php");
+	}
+	if(!empty($_REQUEST['add_post_alert']))
+	{
+	    echo sprintf( '<p>%s</p>', $_REQUEST['add_post_alert'] );
+	} 
+}
 echo '</div>'; 
 
 echo '<div id="edit_profile" class="toggle" style="display:none">';

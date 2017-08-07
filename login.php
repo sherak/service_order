@@ -1,21 +1,18 @@
 <?php
 
-session_start();
-
-require 'db_connection.php';
-
-$email = !empty($_POST['email']) ? htmlentities(stripslashes($_POST['email'])) : '';
-$password = !empty($_POST['password']) ? htmlentities(stripslashes($_POST['password'])) : '';
-$password = sha1($password);
 
 $c = new db_connection();
-$sql = "SELECT * FROM user WHERE email = '$email' AND password = '$password'";
-$row = $c->query($sql)[0];
-$_SESSION['user'] = $row;
-if(empty($row)) {
-	$login_alert = 'Failed to login!';
-   	header("Location: index.php?login_alert={$login_alert}");
-}
-else if($row['email'] == $email and $row['password'] == $password) {
+
+$email = !empty($_POST['email']) ? $c->escape($_POST['email']) : '';
+$password = !empty($_POST['password']) ? $c->escape(sha1($_POST['password'])) : '';
+
+$sql = $c->query("SELECT * FROM user WHERE email = '$email' AND password = '$password'");
+
+if(!empty($sql)) 
+	$_SESSION['user'] = $sql[0];
+else 
+	$form_login->set_error('password', 'Invalid email or password.');
+
+
+if(!$form_login->check_errors()) 
 	header("Location: my_account.php");
-}

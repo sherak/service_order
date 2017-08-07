@@ -1,8 +1,14 @@
 <?php
 
 class db_connection {
+	protected $conn = null;
 
-	function connect() {
+	function __construct() {
+		$this->conn = $this->connect();
+	}
+
+
+	protected function connect() {
 		$config = parse_ini_file('config.ini');
 		$conn = mysqli_connect('localhost', $config['username'], $config['password'], $config['dbname']);
 		if(mysqli_connect_errno()) {
@@ -44,22 +50,19 @@ class db_connection {
        			$column_value .= "',";
        	}
 	    $sql = "UPDATE" . " " . $table . " SET " . $column_value . " WHERE " . $table . "." . $table . "_id=" . $column_id;
-	    $conn = $this->connect();
-	    $result = mysqli_query($conn, $sql);
+	    $result = mysqli_query($this->conn, $sql);
 	    if($result === FALSE) { 
-    		die(mysqli_error($conn));
+    		die(mysqli_error($this->conn));
 		}
-		$affected_rows = mysqli_affected_rows($conn);
-		mysqli_close ($conn);
+		$affected_rows = mysqli_affected_rows($this->conn);
 		return $affected_rows;
   	}
 
   	function query($sql) {
-	    $conn = $this->connect();
-	    $result = mysqli_query($conn, $sql);
+	    $result = mysqli_query($this->conn, $sql);
 	    $delete_query = explode(' ', trim($sql))[0];
 	    if($result === FALSE) { 
-    		die(mysqli_error($conn));
+    		die(mysqli_error($this->conn));
 		}
 		else {
 			if($delete_query == 'DELETE')
@@ -68,6 +71,9 @@ class db_connection {
 		}
   	}
 
+	function escape($str) {
+		return mysqli_escape_string($this->conn, $str);
+	}
 }
 
 /*$c = new db_connection();

@@ -6,19 +6,39 @@ class html_form {
     
     private $tag;
     private $html;
-    
+    private $form;
+    private $form_name;
+    private $success_msg = '';
+
+    function __construct($form_name) {
+        static $json = null;
+        if($json == null) {
+            $json = file_get_contents('forms.json');
+            $json = json_decode($json, true);
+        }
+
+        $this->form_name = $form_name;
+        $this->form = [];
+        foreach($json[$form_name] as $field) {
+            $this->form[$field['name']] = $field;
+            $this->form[$field['name']]['invalid'] = false;
+        }
+    }
+
     function add_attributes($attr_ar) {
         $str = '';
         // check minimized (boolean) attributes
         $min_atts = array('checked', 'disabled', 'readonly', 'multiple',
                 'required', 'autofocus', 'novalidate', 'formnovalidate'); 
         foreach($attr_ar as $key=>$val) {
+            if(!$key)
+                continue;
             if(in_array($key, $min_atts)) {
                 if(!empty($val)) { 
                     $str .= " $key";
                 }
             } else {
-                $str .= " " . (string)addslashes($key) . "=" . (string)addslashes($val);
+                $str .= " " . htmlentities((string)$key) . "=" . htmlentities((string)$val);
             }
         }
         return $str;
@@ -34,7 +54,7 @@ class html_form {
     }
     
     function add_input($type, $name, $value, $attr_ar = array()) {
-        $str = "<input type=\"$type\" name=\"$name\" value=\"$value\"";
+        $str = "<input type=\"$type\" name=\"$name\" value=\"" . htmlentities($value) . "\"";
         if($attr_ar) {
             $str .= $this->add_attributes($attr_ar);
         }
@@ -44,7 +64,7 @@ class html_form {
 
     function add_button($type, $name, $value) {
         $str = "<button type=\"$type\" name=\"$name\">";
-        $str .= $value . '</button>';
+        $str .= htmlentities($value) . '</button>';
         return $str;
     }
     
@@ -53,7 +73,7 @@ class html_form {
         if($attr_ar) {
             $str .= $this->add_attributes( $attr_ar );
         }
-        $str .= ">$value</textarea>";
+        $str .= ">" . htmlentities($value) . "</textarea>";
         return $str;
     }
     
@@ -62,7 +82,7 @@ class html_form {
         if($attr_ar) {
             $str .= $this->add_attributes($attr_ar);
         }
-        $str .= ">$text</label>";
+        $str .= ">" . htmlentities($text) . "</label>";
         return $str;
     }
     
@@ -125,9 +145,37 @@ class html_form {
         return "</form>";
     }
 
-    function getHtml($form_name, $method='post', $new_line=true) {
-        $json = file_get_contents('forms.json');
-        $json = json_decode($json, true);
+    function set_value($name, $value) {
+        $this->form[$name]['value'] = $value;
+    }
+
+    function set_values($values) {
+        foreach($values as $name => $value) {
+            if(isset($this->form[$name]) && $this->form[$name]['type'] != 'submit')
+                $this->form[$name]['value'] = $value;
+        }
+    }
+
+    function set_error($name, $error) {
+        $this->form[$name]['invalid'] = $error;
+    }
+
+    function check_errors() {
+        $form_valid = true;
+        foreach($this->form as $field) {
+            if(isset($field['required']) && $field['required'] && !$field['value'])
+                $field['invalid'] = $field['error'] ?: $field['label'] . ' is required.';
+            if($field['invalid'])
+                $form_valid = false;
+        }
+        return !$form_valid;
+    }
+
+    function set_success_msg($msg) {
+        $this->success_msg = $msg;
+    }
+
+    function get_html($action, $method='post', $new_line=true) {
         $c = new db_connection();
         $sql = "SELECT city FROM service_provider";
         $option_list = $c->query($sql);
@@ -135,31 +183,41 @@ class html_form {
         foreach($option_list as $key => $value) {
             $cities_arr[$value[key($value)]] = $value[key($value)]; 
         }
-        $str = $method == 'get' ? $this->start_form($form_name . '.php', $method) : $this->start_form($form_name . '.php');
-        foreach($json[$form_name] as $json) {
+        $str = $this->start_form($action, $method);
+        if(!empty($this->success_msg))
+            $str .= $this->success_msg;
+        foreach($this->form as $field) {
             $checked = '';
             # TODO: better checking for editing profile
-            if(isset($_SESSION['user']) and $form_name == 'edit_profile') {
+            if(isset($_SESSION['user']) and $this->form_name == 'edit_profile') {
                 $user = $_SESSION['user'];
                 # TODO: password unhashing
-                if($json['type'] != 'radio')
-                    $json['value'] = isset($user[$json['name']]) ? $user[$json['name']] : $json['value'];
+                if($field['type'] != 'radio')
+                    $field['value'] = isset($user[$field['name']]) ? $user[$field['name']] : $field['value'];
                 else
-                    $checked =  $user[$json['name']] == $json['value']  ? 'checked' : '';
+                    $checked =  $user[$field['name']] == $field['value']  ? 'checked' : '';
             }
-            $str .= $json['label'];
-            if($json['type'] == 'submit')
-                $str .= $this->add_button($json['type'], $json['name'], $json['value']);
-            else if($json['type'] == 'select') {
-                $str .= $this->add_select_list($json['name'], $cities_arr);
+            $str .= $field['label'];
+            if($field['type'] == 'submit')
+                $str .= $this->add_button($field['type'], $field['name'], $field['value']);
+            else if($field['type'] == 'select') {
+                $str .= $this->add_select_list($field['name'], $cities_arr);
             }
-            else if($json['type'] == 'textarea') {
-                $str .= $this->add_textarea($json['name']);
+            else if($field['type'] == 'textarea') {
+                $str .= $this->add_textarea($field['name']);
+            }
+            else if($field['type'] == 'radio') {
+                foreach ($field['values'] as $value => $label) {
+                    $str .= '<br>' . $this->add_input($field['type'], $field['name'], $value, array('required' => $field['required'], 'checked' => $value == $field['value'])) . ' ' . $label; 
+                }
             }
             else 
-                $str .= $this->add_input($json['type'], $json['name'], $json['value'], array('id' => $json['name'], 'required' => $json['required'], $checked => $checked));
+                $str .= $this->add_input($field['type'], $field['name'], $field['value'], array('required' => $field['required'], $checked => $checked));
+            if($field['invalid']) {
+                $str .= '<div class="error">' . $field['invalid'] . '</div>';
+            }
             if($new_line)
-                $str .= '</br>';
+                $str .= '<br>';
         }
         $str .= $this->end_form();
         return $str;

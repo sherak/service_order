@@ -6,6 +6,20 @@ $_SESSION['previous_location'] = 'index.php';
 
 require 'html_form.php';
 
+$form_login = new html_form('login');
+$form_register = new html_form('register');
+$form_search_engine = new html_form('search_engine');
+
+if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'login') {
+	$form_login->set_values($_REQUEST);
+	include 'login.php';
+}
+
+if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'register') {
+	$form_register->set_values($_REQUEST);
+	include 'register.php';
+}
+
 echo '<!doctype html>
     	<html lang="en">
     	<head>
@@ -16,22 +30,9 @@ require 'header.php';
 
 echo '</head>';
 
-$x = new html_form();
+echo $form_login->get_html('index.php?action=login');
 
-echo $x->getHtml('login');
-if(!empty( $_REQUEST['login_alert'] ) )
-{
-    echo sprintf( '<p>%s</p>', $_REQUEST['login_alert'] );
-}
+echo $form_register->get_html('index.php?action=register');
 
-echo $x->getHtml('register');
-if(!empty( $_REQUEST['register_alert'] ) )
-{
-    echo sprintf( '<p>%s</p>', $_REQUEST['register_alert'] );
-}
-
-echo $x->getHtml('search_engine', 'get');
-if(isset($_GET['search_engine_btn'])) {
-	header("Location: search_engine.php");
-}
+echo $form_search_engine->get_html('search_engine.php', 'get');
 

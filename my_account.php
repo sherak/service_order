@@ -90,6 +90,6 @@ echo '</div>';
 echo '<div id="service" class="toggle" style="display:none">';
 // TODO: if(isset($_REQUEST['action']) || $_REQUEST['action'] != 'my_craft_firm') $form_craft_firm->set_values(firm record iz baze);
 echo $form_my_craft_firm->get_html('my_craft_firm');
-if(isset($_SESSION['user']) and isset($_POST['my_craft_firm'])) 
+if(isset($_SESSION['user']) and isset($_POST['my_craft_firm_btn'])) 
 	echo $form_my_craft_firm->get_html('my_account.php?action=my_craft_firm');
 echo '</div>';

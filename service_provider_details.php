@@ -4,14 +4,19 @@ session_start();
 
 require 'header.php';
 require 'inc/html_form.php';
+require 'inc/add_comment.php';
 
-$form_service_provider_details = new html_form('service_provider_details');  
+$form_add_comment = new html_form('add_comment');  
 $conn = new db_connection();
 
 $_SESSION['sp_id'] = 0;
 $_SESSION['previous_location_search_engine'] = $_SERVER['REQUEST_URI'];
 
 if(isset($_GET['user_id'])) {
+	if(isset($_REQUEST['action']) && isset($_POST['add_comment'])) {
+		$form_add_comment->set_values($_POST); 
+		add_comment($form_add_comment);
+	}
 	$user_id = $_GET['user_id'];
 	$sql = "SELECT sp_id, fk_occupation_id FROM service_provider WHERE fk_user_id = " . $user_id;
 	$sp_id = $conn->query($sql)[0]['sp_id'];
@@ -36,6 +41,7 @@ if(isset($_GET['user_id'])) {
 		echo '<form action="" method="post">';
 		echo "<input id='follow_btn' type='submit' name='unfollow' value='unfollow'/>";
 		echo '</form>';
+		//header("Location: " . $_SESSION['previous_location_search_engine']);
 	}
 	else if(isset($_POST['unfollow'])) {
 		$user_id = $_SESSION['user']['user_id'];
@@ -46,6 +52,7 @@ if(isset($_GET['user_id'])) {
 		echo '<form action="" method="post">';
 		echo "<input id='follow_btn' type='submit' name='follow' value='follow'/>";
 		echo '</form>';
+		//header("Location: " . $_SESSION['previous_location_search_engine']);
 	}
 	else {
 		$user_id = $_SESSION['user']['user_id'];
@@ -74,9 +81,8 @@ if(isset($_GET['user_id'])) {
 	$sql = "SELECT * FROM post WHERE fk_sp_id = '$sp_id'";
 	$posts = $conn->query($sql);
 	echo '<div id="posts" class="toggle" style="display:none">';
-	foreach ($posts as $key => $value) {
+	foreach ($posts as $key => $value) 
 		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
-	}
 	echo '</div>';
 	echo '<div id="purchase" class="toggle" style="display:none">' . $purchase_str . '</div>';	
 
@@ -87,8 +93,8 @@ if(isset($_GET['user_id'])) {
 		echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
 		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
 	}
-	if(isset($_SESSION['user']))
-		echo $form_service_provider_details->get_html('add_comment', 'post', false);
+	if(isset($_SESSION['user']) && isset($_POST['add_comment_btn']))
+		echo $form_add_comment->get_html('service_provider_details.php?action=add_comment');
 	else
 		echo 'You have to sign to write comments.';
 }

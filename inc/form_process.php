@@ -3,8 +3,8 @@
 function handle_login($form_login) {
 	$conn = new db_connection();
 
-	$email = !empty($_POST['email']) ? $conn->escape($_POST['email']) : '';
-	$password = !empty($_POST['password']) ? $conn->escape(sha1($_POST['password'])) : '';
+	$email = !empty($_POST['email']) ? $_POST['email'] : '';
+	$password = !empty($_POST['password']) ? sha1($_POST['password']) : '';
 
 	$sql = $conn->query("SELECT * FROM user WHERE email = '$email' AND password = '$password'");
 
@@ -22,11 +22,11 @@ function handle_register($form_register) {
 	$conn = new db_connection();
 
 	if(isset($_POST['register_btn'])) {
-		$name = !empty($_POST['name']) ? ucfirst($conn->escape($_POST['name'])) : '';
-		$surname = !empty($_POST['surname']) ? ucfirst($conn->escape($_POST['surname'])) : '';
-		$email = !empty($_POST['email']) ? $conn->escape($_POST['email']) : '';
-		$password = !empty($_POST['password']) ? $conn->escape(sha1($_POST['password'])) : '';
-		$password_rpt = !empty($_POST['password_rpt']) ? $conn->escape(sha1($_POST['password_rpt'])) : '';
+		$name = !empty($_POST['name']) ? ucfirst($_POST['name']) : '';
+		$surname = !empty($_POST['surname']) ? ucfirst($_POST['surname']) : '';
+		$email = !empty($_POST['email']) ? $_POST['email'] : '';
+		$password = !empty($_POST['password']) ? sha1($_POST['password']) : '';
+		$password_rpt = !empty($_POST['password_rpt']) ? sha1($_POST['password_rpt']) : '';
 		$gender = !empty($_POST['gender']) ? $_POST['gender'] : '';
 
 		$sql = "SELECT * FROM user WHERE email = '$email'";

@@ -12,26 +12,37 @@ if(isset($_SESSION['user'])) {
 }
 
 require 'inc/html_form.php';
-require 'inc/edit_profile.php';
 require 'inc/add_post.php';
+require 'inc/edit_profile.php';
+require 'inc/search_engine.php';
+require 'inc/my_craft_firm.php';
 
 $form_add_post = new html_form('add_post');                        
 $form_edit_profile = new html_form('edit_profile');
 $form_search_engine = new html_form('search_engine');
-$form_craft_firm = new html_form('my_craft_firm');
+$form_my_craft_firm = new html_form('my_craft_firm');
 
 if(isset($_REQUEST['action'])) {
 	switch($_REQUEST['action']) {
 		case 'add_post':
 			$form_add_post->set_values($_POST);
 			if(isset($_SESSION['user']) and isset($_POST['add_post_btn'])) 
-				add_post($form_add_post)
+				add_post($form_add_post);
 			break;
-
 		case 'edit_profile':
 			$form_edit_profile->set_values($_POST);
-			if(isset($_SESSION['user']) and isset($_POST['edit_profile']))
-				edit_profile($form_edit_profile)
+			if(isset($_SESSION['user']) and isset($_POST['edit_profile_btn']))
+				edit_profile($form_edit_profile);
+			break;
+		case 'search_engine':
+			$form_search_engine->set_values($_GET);
+			if(isset($_SESSION['user']) and isset($_GET['search_engine_btn']))
+				search_engine($form_search_engine);
+			break;
+		case 'my_craft_firm':
+			$form_my_craft_firm->set_values($_POST);
+			if(isset($_SESSION['user']) and isset($_POST['my_craft_firm_btn'])) 
+				my_craft_firm($form_my_craft_firm);
 			break;
 	}
 }
@@ -73,12 +84,12 @@ echo '</div>';
 echo '<div id="search" class="toggle" style="display:none">';
 echo $form_search_engine->get_html('search_engine', 'get');
 if(isset($_SESSION['user']) and isset($_GET['search_engine_btn'])) 
-	include 'search_engine.php';
+	echo $form_search_engine->get_html('my_account.php?action=search_engine');
 echo '</div>';
 
 echo '<div id="service" class="toggle" style="display:none">';
 // TODO: if(isset($_REQUEST['action']) || $_REQUEST['action'] != 'my_craft_firm') $form_craft_firm->set_values(firm record iz baze);
-echo $form_craft_firm->get_html('my_craft_firm');
+echo $form_my_craft_firm->get_html('my_craft_firm');
 if(isset($_SESSION['user']) and isset($_POST['my_craft_firm'])) 
-	include 'my_craft_firm.php';
+	echo $form_my_craft_firm->get_html('my_account.php?action=my_craft_firm');
 echo '</div>';

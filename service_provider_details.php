@@ -91,9 +91,4 @@ if(isset($_GET['user_id'])) {
 		echo $form_service_provider_details->get_html('add_comment', 'post', false);
 	else
 		echo 'You have to sign to write comments.';
-
-	if(!empty($_REQUEST['comment_alert']))
-	{
-    echo sprintf( '<p>%s</p>', $_REQUEST['comment_alert'] );
-	}
 }

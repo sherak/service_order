@@ -1,7 +1,5 @@
 <?php
 
-require 'db_connection.php';
-
 function edit_profile($form_edit_profile) {
   $conn = new db_connection();
 

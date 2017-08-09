@@ -1,6 +1,7 @@
 <?php
 
 class db_connection {
+
 	protected $conn = null;
 
 	function __construct() {
@@ -76,22 +77,3 @@ class db_connection {
 		return mysqli_escape_string($this->conn, $str);
 	}
 }
-
-/*$c = new db_connection();
-
-$c->insert_data('user', [
-  'name' => 'Simone',
-  'surname' => 'Herak',
-  'email' => 'herak4@gmail.com',
-  'password' => 'sherak',
-  'gender' => 'M'
-]);
-
-$user_id = 7;
-$c->update_data('user', [
-  'name' => 'Mario',
-  'surname' => 'Marić',
-  'email' => 'mario.maric@gmail.com',
-  'password' => 'mmaric',
-  'gender' => 'M'
-], $user_id);*/

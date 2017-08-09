@@ -1,6 +1,6 @@
 <?php
 
-require 'db_connection.php';
+require 'inc/db_connection.php';
 
 class html_form {
     

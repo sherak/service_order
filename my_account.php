@@ -1,24 +1,42 @@
 <?php
 
+require 'header.php';
+
 session_start();
 
 $_SESSION['previous_location'] = 'my_account.php';
 
 if(isset($_SESSION['user'])) {
 	$user = $_SESSION['user'];
-	echo 'Login success! Welcome ' . $user['name'];
+	echo 'Welcome ' . $user['name'];
 }
 
-require 'html_form.php';
+require 'inc/html_form.php';
+require 'inc/edit_profile.php';
+require 'inc/add_post.php';
 
-$x = new html_form();                        
+$form_add_post = new html_form('add_post');                        
+$form_edit_profile = new html_form('edit_profile');
+$form_search_engine = new html_form('search_engine');
+$form_craft_firm = new html_form('my_craft_firm');
 
-$tag = 'a';
-$attr_ar = array("href" => "logout.php");
-$str = $x->start_tag($tag, $attr_ar);
-$str .= 'Logout';
-$str .= $x->end_tag($tag);
-echo $str;
+if(isset($_REQUEST['action'])) {
+	switch($_REQUEST['action']) {
+		case 'add_post':
+			$form_add_post->set_values($_POST);
+			if(isset($_SESSION['user']) and isset($_POST['add_post_btn'])) 
+				add_post($form_add_post)
+			break;
+
+		case 'edit_profile':
+			$form_edit_profile->set_values($_POST);
+			if(isset($_SESSION['user']) and isset($_POST['edit_profile']))
+				edit_profile($form_edit_profile)
+			break;
+	}
+}
+
+echo '<a href="logout.php">Logout</a><br>';
  
 echo '<div id="nav">';
 echo '<a href="#news_feed">News Feed</a><br>';
@@ -27,11 +45,12 @@ echo '<a href="#search">Search</a><br>';
 echo '<a href="#service">Provide your service</a><br>';
 echo '</div>';
 
+$conn = new db_connection();
+
 echo '<div id="news_feed" class="toggle" style="display:block">';
-$c = new db_connection();
 $user_id = $_SESSION['user']['user_id'];
 $sql = "SELECT * FROM follow INNER JOIN post on post.fk_sp_id = follow.fk_sp_id INNER JOIN service_provider ON service_provider.sp_id = follow.fk_sp_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE follow.fk_user_id = '$user_id'";
-$followers = $c->query($sql);
+$followers = $conn->query($sql);
 if(!empty($followers)) {
 	foreach ($followers as $key => $value) {
 		echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
@@ -39,46 +58,27 @@ if(!empty($followers)) {
 	}
 }
 $sql = "SELECT sp_id FROM service_provider WHERE fk_user_id = '$user_id'";
-$sp_id = $c->query($sql);
+$sp_id = $conn->query($sql);
 if(!empty($sp_id)) {
-	echo $x->getHtml('add_post');
-	if(isset($_SESSION['user']) and isset($_POST['add_post_btn'])) {
-		header("Location: add_post.php");
-	}
-	if(!empty($_REQUEST['add_post_alert']))
-	{
-	    echo sprintf( '<p>%s</p>', $_REQUEST['add_post_alert'] );
-	} 
+	echo $form_add_post->get_html('my_account.php?action=add_post');
 }
 echo '</div>'; 
 
 echo '<div id="edit_profile" class="toggle" style="display:none">';
-echo $x->getHtml('edit_profile');
-if(isset($_SESSION['user']) and isset($_POST['edit_profile'])) {
-	header("Location: edit_profile.php");
-} 
-if(!empty($_REQUEST['edit_profile_alert']))
-{
-    echo sprintf( '<p>%s</p>', $_REQUEST['edit_profile_alert'] );
-}
+if(isset($_REQUEST['action']) || $_REQUEST['action'] != 'edit_profile')
+	$form_edit_profile->set_values($_SESSION['user']);
+echo $form_edit_profile->get_html('my_account.php?action=edit_profile');
 echo '</div>';
 
 echo '<div id="search" class="toggle" style="display:none">';
-echo $x->getHtml('search_engine', 'get');
-if(isset($_SESSION['user']) and isset($_GET['search_engine_btn'])) {
-	header("Location: search_engine.php");
-} 
+echo $form_search_engine->get_html('search_engine', 'get');
+if(isset($_SESSION['user']) and isset($_GET['search_engine_btn'])) 
+	include 'search_engine.php';
 echo '</div>';
 
 echo '<div id="service" class="toggle" style="display:none">';
-echo $x->getHtml('my_craft_firm');
-if(isset($_SESSION['user']) and isset($_POST['my_craft_firm'])) {
-	header("Location: my_craft_firm.php");
-} 
-if(!empty($_REQUEST['my_craft_firm_alert']))
-{
-    echo sprintf( '<p>%s</p>', $_REQUEST['my_craft_firm_alert'] );
-}
-echo '</div>';	
-
-require 'header.php';
+// TODO: if(isset($_REQUEST['action']) || $_REQUEST['action'] != 'my_craft_firm') $form_craft_firm->set_values(firm record iz baze);
+echo $form_craft_firm->get_html('my_craft_firm');
+if(isset($_SESSION['user']) and isset($_POST['my_craft_firm'])) 
+	include 'my_craft_firm.php';
+echo '</div>';

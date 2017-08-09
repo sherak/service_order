@@ -2,18 +2,10 @@
 
 session_start();
 
-require 'html_form.php';
+require 'inc/html_form.php';
 
-$x = new html_form();  
-
-// prevent direct access to this page 
-/*$isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
-strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-if(!$isAjax) {
-  $user_error = 'Access denied - direct call is not allowed...';
-  trigger_error($user_error, E_USER_ERROR);
-}
-ini_set('display_errors',1);*/
+$form_search_engine = new html_form('search_engine');  
+$conn = new db_connection();
 
 if(!isset($_REQUEST['term_autocomplete'])) 
 	exit;
@@ -38,10 +30,8 @@ if(preg_match("/[^\040\pL\pN_-]/u", $term)) {
 $city = !empty($_GET['city']) ? $_GET['city'] : '';
 $quart = !empty($_GET['quart']) ? $_GET['quart'] : '';
 
-$c = new db_connection();
-
 $sql = "SELECT category, type FROM occupation";
-$data = $c->query($sql);
+$data = $conn->query($sql);
 foreach ($data as $key => $value) {
 	$a_json[] =  $value['category'];
 	$a_json[] = $value['type'];	
@@ -49,7 +39,7 @@ foreach ($data as $key => $value) {
 $a_json = array_values(array_unique($a_json));
 $sql = "SELECT * FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') AND (city = '$city') ORDER BY category, type";
 // TODO: add implementation for quart
-if($data = $c->query($sql)) {
+if($data = $conn->query($sql)) {
 	$categories = array();
 	$types = array();
 	$city = '';
@@ -91,25 +81,13 @@ if($data = $c->query($sql)) {
 		echo 'Work address: ' . $value['work_address'] . '<br>';
 		echo 'City: ' . $value['city'] . '<br>';
 		echo 'Country: ' . $value['country'] . '<br>';
-		$tag = 'a';
-		$attr_ar = array("href" => "service_provider_details.php?user_id=" . $value['user_id']);
-		$str = $x->start_tag($tag, $attr_ar);
-		$str .= 'Show profile';
-		$str .= $x->end_tag($tag);
-		echo $str;
-		echo '<br><br>';
+		echo '<a href="service_provider_details.php?user_id=' . $value['user_id'] . '>Show profile</a><br>';
+		echo '<br>';
 	}
 } 
 else {
 	echo "We didn't find any match.";
 }
-
-$tag = 'a';
-$attr_ar = array("href" => $_SESSION['previous_location']);
-$str = $x->start_tag($tag, $attr_ar);
-$str .= 'Back';
-$str .= $x->end_tag($tag);
-echo $str;
 
 json_encode($a_json);
 flush();

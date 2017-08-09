@@ -188,15 +188,6 @@ class html_form {
             $str .= $this->success_msg;
         foreach($this->form as $field) {
             $checked = '';
-            # TODO: better checking for editing profile
-            if(isset($_SESSION['user']) and $this->form_name == 'edit_profile') {
-                $user = $_SESSION['user'];
-                # TODO: password unhashing
-                if($field['type'] != 'radio')
-                    $field['value'] = isset($user[$field['name']]) ? $user[$field['name']] : $field['value'];
-                else
-                    $checked =  $user[$field['name']] == $field['value']  ? 'checked' : '';
-            }
             $str .= $field['label'];
             if($field['type'] == 'submit')
                 $str .= $this->add_button($field['type'], $field['name'], $field['value']);
@@ -210,6 +201,9 @@ class html_form {
                 foreach ($field['values'] as $value => $label) {
                     $str .= '<br>' . $this->add_input($field['type'], $field['name'], $value, array('required' => $field['required'], 'checked' => $value == $field['value'])) . ' ' . $label; 
                 }
+            }
+            else if($field['type'] == 'password') {
+                $str .= $this->add_input($field['type'], $field['name'], '', array('required' => $field['required'], $checked => $checked));
             }
             else 
                 $str .= $this->add_input($field['type'], $field['name'], $field['value'], array('required' => $field['required'], $checked => $checked));

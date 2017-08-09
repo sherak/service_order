@@ -26,6 +26,7 @@ class db_connection {
 		$columns = array_keys($data);
 		$values = array_values($data);
     	$columns = implode(',', $columns);
+    	array_walk($values, function(&$v){ $v = $this->escape($v); });
     	$values = implode("','", $values);
     	$sql = "INSERT INTO " . $table . " (" . $columns . ") VALUES ('" . $values . "')";
 	    $conn = $this->connect();

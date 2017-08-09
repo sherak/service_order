@@ -5,8 +5,8 @@
             { "name":"login_btn", "label":"", "value":"Sign in", "type":"submit" }
     ],
     "register": [
-            { "name":"name", "label":"First Name", "value":"", "type":"string", "required":true },
-            { "name":"surname", "label":"Last Name", "value":"", "type":"string", "required":true },
+            { "name":"name", "label":"First Name", "value":"", "type":"text", "required":true },
+            { "name":"surname", "label":"Last Name", "value":"", "type":"text", "required":true },
             { "name":"email", "label":"Email Address", "value":"", "type":"email", "required":true },
             { "name":"password", "label":"Password", "value":"", "type":"password", "required":true },
             { "name":"password_rpt", "label":"Repeat Password", "value":"", "type":"password", "required":true },
@@ -14,36 +14,35 @@
             { "name":"register_btn", "label":"", "value":"Sign up", "type":"submit" }
     ],
     "search_engine": [
-            { "name":"Location", "label":"Location", "value":"", "type":"input", "required":false },
-            { "name":"term_autocomplete", "label":"Enter the desired term", "value":"", "type":"string", "required":false },
+            { "name":"Location", "label":"Location", "value":"", "type":"text", "required":false },
+            { "name":"term_autocomplete", "label":"Enter the desired term", "value":"", "type":"text", "required":false },
             { "name":"search_engine_btn", "label":"", "value":"Search", "type":"submit" }
     ],
     "edit_profile": [
-            { "name":"name", "label":"First Name", "value":"", "type":"string", "required":true },
-            { "name":"surname", "label":"Last Name", "value":"", "type":"string", "required":true },
+            { "name":"name", "label":"First Name", "value":"", "type":"text", "required":true },
+            { "name":"surname", "label":"Last Name", "value":"", "type":"text", "required":true },
             { "name":"email", "label":"Email Address", "value":"", "type":"email", "required":true },
-            { "name":"password", "label":"Password", "value":"", "type":"password", "required":true },
-            { "name":"password_rpt", "label":"Repeat Password", "value":"", "type":"password", "required":true },
-            { "name":"gender", "label":"Male", "value":"M", "type":"radio", "required":true },
-            { "name":"gender", "label":"Female", "value":"F", "type":"radio", "required":true },
+            { "name":"password", "label":"Password", "value":"", "type":"password", "required":false },
+            { "name":"password_rpt", "label":"Repeat Password", "value":"", "type":"password", "required":false },
+            { "name":"gender", "label":"Gender", "value":"", "type":"radio", "required":true, "values": { "M": "Male", "F": "Female" } },
             { "name":"edit_profile_btn", "label":"", "value":"Save", "type":"submit" }
     ],
     "my_craft_firm": [
-            { "name":"work_address", "label":"Work Address", "value":"", "type":"string", "required":true },
-            { "name":"city", "label":"City", "value":"", "type":"string", "required":true },
-            { "name":"country", "label":"Country", "value":"", "type":"string", "required":true },
-            { "name":"postal_code", "label":"Postal Code", "value":"", "type":"string", "required":true },
-            { "name":"phone_number", "label":"Phone number", "value":"", "type":"string", "required":true },
-            { "name":"category", "label":"Work category", "value":"", "type":"string", "required":true },
-            { "name":"type", "label":"Work type", "value":"", "type":"string", "required":true },
+            { "name":"work_address", "label":"Work Address", "value":"", "type":"text", "required":true },
+            { "name":"city", "label":"City", "value":"", "type":"text", "required":true },
+            { "name":"country", "label":"Country", "value":"", "type":"text", "required":true },
+            { "name":"postal_code", "label":"Postal Code", "value":"", "type":"text", "required":true },
+            { "name":"phone_number", "label":"Phone number", "value":"", "type":"text", "required":true },
+            { "name":"category", "label":"Work category", "value":"", "type":"text", "required":true },
+            { "name":"type", "label":"Work type", "value":"", "type":"text", "required":true },
             { "name":"details", "label":"Work details", "value":"", "type":"textarea", "required":true },
             { "name":"experience", "label":"Work experience", "value":"", "type":"textarea", "required":true },
-            { "name":"service", "label":"Service (optional)", "value":"", "type":"string", "required":false },
+            { "name":"service", "label":"Service (optional)", "value":"", "type":"text", "required":false },
             { "name":"price", "label":"Price (optional)", "value":"", "type":"number", "required":false },
             { "name":"my_craft_firm_btn", "label":"", "value":"Open", "type":"submit" }
     ],
     "add_comment": [
-            { "name":"content", "label":"Content", "value":"", "type":"string", "required":true },
+            { "name":"content", "label":"Content", "value":"", "type":"text", "required":true },
             { "name":"stars", "label":"Poor", "value":"1", "type":"radio", "required":true },
             { "name":"stars", "label":"Fair", "value":"2", "type":"radio", "required":true },
             { "name":"stars", "label":"Average", "value":"3", "type":"radio", "required":true },
@@ -52,7 +51,7 @@
             { "name":"add_comment_btn", "label":"", "value":"Comment and evaluate", "type":"submit" }
     ],    
     "add_post": [
-            { "name":"content", "label":"Content", "value":"", "type":"string", "required":true },
+            { "name":"content", "label":"Content", "value":"", "type":"text", "required":true },
             { "name":"add_post_btn", "label":"", "value":"Post", "type":"submit" }
     ]    
 }

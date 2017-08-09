@@ -2,11 +2,11 @@
 
 session_start();
 
-require 'html_form.php';
+require 'header.php';
+require 'inc/html_form.php';
 
-$x = new html_form();  
-
-$c = new db_connection();
+$form_service_provider_details = new html_form('service_provider_details');  
+$conn = new db_connection();
 
 $_SESSION['sp_id'] = 0;
 $_SESSION['previous_location_search_engine'] = $_SERVER['REQUEST_URI'];
@@ -14,11 +14,11 @@ $_SESSION['previous_location_search_engine'] = $_SERVER['REQUEST_URI'];
 if(isset($_GET['user_id'])) {
 	$user_id = $_GET['user_id'];
 	$sql = "SELECT sp_id, fk_occupation_id FROM service_provider WHERE fk_user_id = " . $user_id;
-	$sp_id = $c->query($sql)[0]['sp_id'];
+	$sp_id = $conn->query($sql)[0]['sp_id'];
 	$_SESSION['sp_id'] = $sp_id;
-	$fk_occupation_id = $c->query($sql)[0]['fk_occupation_id'];
+	$fk_occupation_id = $conn->query($sql)[0]['fk_occupation_id'];
 	$sql = "SELECT * FROM user INNER JOIN service_provider ON service_provider.fk_user_id = '$user_id' INNER JOIN occupation ON occupation.occupation_id = '$fk_occupation_id' WHERE user.user_id = '$user_id' ORDER BY category, type"; 
-	$profile_details = $c->query($sql)[0];
+	$profile_details = $conn->query($sql)[0];
 	echo '<b>Profile details</b><br>';
 	echo 'Name: ' . $profile_details['name'] . '<br>';
 	echo 'Surname: ' . $profile_details['surname'] . '<br>';
@@ -32,7 +32,7 @@ if(isset($_GET['user_id'])) {
 		$datetime = date("Y-m-d H:i:s");
 		$user_id = $_SESSION['user']['user_id'];
 		$data = array("datetime" => $datetime, "fk_sp_id" => $sp_id, "fk_user_id" => $user_id);
-		$c->insert_data('follow', $data);	
+		$conn->insert_data('follow', $data);	
 		echo '<form action="" method="post">';
 		echo "<input id='follow_btn' type='submit' name='unfollow' value='unfollow'/>";
 		echo '</form>';
@@ -40,9 +40,9 @@ if(isset($_GET['user_id'])) {
 	else if(isset($_POST['unfollow'])) {
 		$user_id = $_SESSION['user']['user_id'];
 		$sql = "SELECT follow_id FROM follow WHERE fk_sp_id = '$sp_id' AND fk_user_id = '$user_id'";
-		$follow_id = $c->query($sql)[0]['follow_id'];
+		$follow_id = $conn->query($sql)[0]['follow_id'];
 		$sql = "DELETE FROM follow WHERE follow_id = '$follow_id'";
-		$c->query($sql);
+		$conn->query($sql);
 		echo '<form action="" method="post">';
 		echo "<input id='follow_btn' type='submit' name='follow' value='follow'/>";
 		echo '</form>';
@@ -50,7 +50,7 @@ if(isset($_GET['user_id'])) {
 	else {
 		$user_id = $_SESSION['user']['user_id'];
 		$sql = "SELECT fk_user_id FROM service_provider WHERE sp_id = '$sp_id'";
-		$fk_user_id = $c->query($sql)[0]['fk_user_id'];
+		$fk_user_id = $conn->query($sql)[0]['fk_user_id'];
 		if($user_id != $fk_user_id) {
 			echo '<form action="" method="post">';
 			echo "<input id='follow_btn' type='submit' name='follow' value='follow' />";
@@ -72,7 +72,7 @@ if(isset($_GET['user_id'])) {
 
 	echo '<div id="general" class="toggle" style="display:block">' . $general_str . '</div>'; 
 	$sql = "SELECT * FROM post WHERE fk_sp_id = '$sp_id'";
-	$posts = $c->query($sql);
+	$posts = $conn->query($sql);
 	echo '<div id="posts" class="toggle" style="display:none">';
 	foreach ($posts as $key => $value) {
 		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
@@ -82,13 +82,13 @@ if(isset($_GET['user_id'])) {
 
 	echo '<br><b>Comments</b><br>';
 	$sql = "SELECT * FROM comment INNER JOIN user ON user.user_id = comment.fk_user_id WHERE comment.fk_sp_id = '$sp_id'";
-	$comments = $c->query($sql);
+	$comments = $conn->query($sql);
 	foreach ($comments as $key => $value) {
 		echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
 		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
 	}
 	if(isset($_SESSION['user']))
-		echo $x->getHtml('add_comment', 'post', false);
+		echo $form_service_provider_details->get_html('add_comment', 'post', false);
 	else
 		echo 'You have to sign to write comments.';
 
@@ -97,5 +97,3 @@ if(isset($_GET['user_id'])) {
     echo sprintf( '<p>%s</p>', $_REQUEST['comment_alert'] );
 	}
 }
-
-require 'header.php';

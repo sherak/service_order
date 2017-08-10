@@ -13,7 +13,7 @@ $_SESSION['sp_id'] = 0;
 $_SESSION['previous_location_search_engine'] = $_SERVER['REQUEST_URI'];
 
 if(isset($_GET['user_id'])) {
-	if(isset($_REQUEST['action']) && isset($_POST['add_comment'])) {
+	if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'add_comment') {
 		$form_add_comment->set_values($_POST); 
 		add_comment($form_add_comment);
 	}
@@ -32,37 +32,27 @@ if(isset($_GET['user_id'])) {
 	echo 'Country: ' . $profile_details['country'] . '<br>';
 	echo 'Email: ' . $profile_details['email'] . '<br>';
 	echo 'Phone number: ' . $profile_details['phone_number'] . '<br>';
-	// TODO: involve js
-	if(isset($_POST['follow'])) {
+	if(isset($_GET['action']) && $_GET['action'] == 'follow') {
 		$datetime = date("Y-m-d H:i:s");
-		$user_id = $_SESSION['user']['user_id'];
-		$data = array("datetime" => $datetime, "fk_sp_id" => $sp_id, "fk_user_id" => $user_id);
-		$conn->insert_data('follow', $data);	
-		echo '<form action="" method="post">';
-		echo "<input id='follow_btn' type='submit' name='unfollow' value='unfollow'/>";
-		echo '</form>';
-		//header("Location: " . $_SESSION['previous_location_search_engine']);
+		$data = array("datetime" => $datetime, "fk_sp_id" => $sp_id, "fk_user_id" => $_SESSION['user']['user_id']);
+		print_r($data);
+		$conn->insert_data('follow', $data);
 	}
-	else if(isset($_POST['unfollow'])) {
-		$user_id = $_SESSION['user']['user_id'];
-		$sql = "SELECT follow_id FROM follow WHERE fk_sp_id = '$sp_id' AND fk_user_id = '$user_id'";
+	else if(isset($_GET['action']) && $_GET['action'] == 'unfollow') {
+		$sql = "SELECT follow_id FROM follow WHERE fk_sp_id = '$sp_id' AND fk_user_id = " . (int)$_SESSION['user']['user_id'];
 		$follow_id = $conn->query($sql)[0]['follow_id'];
 		$sql = "DELETE FROM follow WHERE follow_id = '$follow_id'";
-		$conn->query($sql);
-		echo '<form action="" method="post">';
-		echo "<input id='follow_btn' type='submit' name='follow' value='follow'/>";
-		echo '</form>';
-		//header("Location: " . $_SESSION['previous_location_search_engine']);
+		$conn->query($sql);	
 	}
-	else {
-		$user_id = $_SESSION['user']['user_id'];
-		$sql = "SELECT fk_user_id FROM service_provider WHERE sp_id = '$sp_id'";
-		$fk_user_id = $conn->query($sql)[0]['fk_user_id'];
-		if($user_id != $fk_user_id) {
-			echo '<form action="" method="post">';
-			echo "<input id='follow_btn' type='submit' name='follow' value='follow' />";
-			echo '</form>';
-		}
+	$user_id = $_SESSION['user']['user_id'];
+	$sql = "SELECT fk_user_id FROM service_provider WHERE sp_id = '$sp_id'";
+	$fk_user_id = $conn->query($sql)[0]['fk_user_id'];
+	if($user_id != $fk_user_id) {
+		$sql = "SELECT count(*) cnt FROM follow WHERE fk_sp_id = " . (int)$sp_id . " AND fk_user_id = " . (int)$user_id . "";
+		if($conn->query($sql)[0]['cnt']) 
+			echo '<a class="follow_link" href="?action=unfollow&sp_id=' . $sp_id . '&user_id=' . $_GET['user_id'] . '">unfollow</a>';	
+		else 
+			echo '<a class="follow_link" href="?action=follow&sp_id=' . $sp_id . '&user_id=' . $_GET['user_id'] . '">follow</a>';
 	}
 	echo '<br>';
 
@@ -81,7 +71,7 @@ if(isset($_GET['user_id'])) {
 	$sql = "SELECT * FROM post WHERE fk_sp_id = '$sp_id'";
 	$posts = $conn->query($sql);
 	echo '<div id="posts" class="toggle" style="display:none">';
-	foreach ($posts as $key => $value) 
+	foreach($posts as $key => $value) 
 		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
 	echo '</div>';
 	echo '<div id="purchase" class="toggle" style="display:none">' . $purchase_str . '</div>';	
@@ -93,8 +83,8 @@ if(isset($_GET['user_id'])) {
 		echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
 		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
 	}
-	if(isset($_SESSION['user']) && isset($_POST['add_comment_btn']))
-		echo $form_add_comment->get_html('service_provider_details.php?action=add_comment');
+	if(isset($_SESSION['user']))
+		echo $form_add_comment->get_html($_SERVER['REQUEST_URI'] . '&action=add_comment');
 	else
-		echo 'You have to sign to write comments.';
+		echo 'You have to sign in to write comments.';
 }

@@ -1,5 +1,7 @@
 <?php
 
+require 'geocoding.php';
+
 function search_engine($form_search_engine) { 
 	$conn = new db_connection();
 
@@ -7,7 +9,7 @@ function search_engine($form_search_engine) {
 		exit;
 
 	// retrieve the search term that autocomplete sends 
-	$term = trim(strip_tags($_GET['term_autocomplete'])); 
+	$term = trim(strip_tags($_POST['term_autocomplete'])); 
 	// replace multiple spaces with one 
 	$term = preg_replace('/\s+/', ' ', $term);
 
@@ -23,66 +25,71 @@ function search_engine($form_search_engine) {
 	 	exit;
 	}
 
-	$city = !empty($_GET['city']) ? $_GET['city'] : '';
-	$quart = !empty($_GET['quart']) ? $_GET['quart'] : '';
-
+	$location = !empty($_POST['location']) ? $_POST['location'] : '';
+	$url = 'https://maps.googleapis.com/maps/api/geocode/json?location=' . $location . '&	key=AIzaSyD6ajZUdUGEsQFUQKxHR1l_y4xsdGDKjdw';
+	$body = http_response($url);
+	print_r($body);	
 	$sql = "SELECT category, type FROM occupation";
 	$data = $conn->query($sql);
-	foreach ($data as $key => $value) {
+	foreach($data as $key => $value) {
 		$a_json[] =  $value['category'];
 		$a_json[] = $value['type'];	
 	}
 	$a_json = array_values(array_unique($a_json));
-	$sql = "SELECT * FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') AND (city = '$city') ORDER BY category, type";
-	// TODO: add implementation for quart
+	$sql = "SELECT * FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') ORDER BY category, type";
 	if($data = $conn->query($sql)) {
 		$categories = array();
 		$types = array();
-		$city = '';
-		$quart = '';
+		$cities = array();
 		$service_providers = array();
 		foreach($data as $key => $value) {
 			array_push($categories, $value['category']);
 			array_push($types, $value['type']);
-			$city = $value['city'];
-			$quart = $value['city'];
+			array_push($cities, $value['city']);
 			array_push($service_providers, array('user_id' => $value['user_id'],'name' => $value['name'], 'surname' => $value['surname'], 'work_address' => $value['work_address'], 'city' => $value['city'], 'country' => $value['country']));
 		}
-		echo '<b>You searched for:</b><br>';
-		echo 'Category: ';
+		$str = '<b>You searched for:</b><br>';
+		$str .= 'Category: ';
 		$categories = array_unique($categories);
 		foreach($categories as $category) {
 			if ($category === end($categories))
-				echo $category;
+				$str .= $category;
 			else
-				echo $category . ', ';
+				$str .= $category . ', ';
 		}
-		echo '<br>';
-		echo 'Type: ';
+		$str .= '<br>';
+		$str .= 'Type: ';
 		$types = array_unique($types);
 		foreach($types as $type) {
 			if ($type === end($types))
-				echo $type;
+				$str .= $type;
 			else
-				echo $type . ', ';
+				$str .= $type . ', ';
 		}
-		echo '<br>';
-		echo 'City: ' . $city . '<br>';
-		echo 'Quart: ' . $quart . '<br>';
-		echo '<br>';
-		echo '<b>Results:</b><br>';
+		$str .= '<br>';
+		$str .= 'City: ';
+		$cities = array_unique($cities);
+		foreach($cities as $city) {
+			if ($city === end($cities))
+				$str .= $city;
+			else
+				$str .= $city . ', ';
+		}
+		$str .= '<br><br>';
+		$str .= '<b>Results:</b><br>';
 		foreach($service_providers as $key => $value) {
-			echo 'Name: ' . $value['name'] . '<br>';
-			echo 'Surname: ' . $value['surname'] . '<br>';
-			echo 'Work address: ' . $value['work_address'] . '<br>';
-			echo 'City: ' . $value['city'] . '<br>';
-			echo 'Country: ' . $value['country'] . '<br>';
-			echo '<a href="service_provider_details.php?user_id=' . $value['user_id'] . '>Show profile</a><br>';
-			echo '<br>';
+			$str .= 'Name: ' . $value['name'] . '<br>';
+			$str .= 'Surname: ' . $value['surname'] . '<br>';
+			$str .= 'Work address: ' . $value['work_address'] . '<br>';
+			$str .= 'City: ' . $value['city'] . '<br>';
+			$str .= 'Country: ' . $value['country'] . '<br>';
+			$str .= '<a href="service_provider_details.php?user_id=' . $value['user_id'] . '">Show profile</a><br>';
+			$str .= '<br>';
+			$form_search_engine->set_success_msg($str);
 		}
 	} 
 	else {
-		echo "We didn't find any match.";
+		$form_search_engine->set_error('search_engine_btn', 'We didn\'t find any match.');
 	}
 
 	json_encode($a_json);

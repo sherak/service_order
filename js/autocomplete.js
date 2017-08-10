@@ -1,5 +1,5 @@
 $(function() {
 	$("#term_autocomplete").autocomplete({
-  		source: 'search_engine.php'
+  		source: 'inc/search_engine.php'
 	});
 });

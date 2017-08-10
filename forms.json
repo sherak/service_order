@@ -14,7 +14,7 @@
             { "name":"register_btn", "label":"", "value":"Sign up", "type":"submit" }
     ],
     "search_engine": [
-            { "name":"Location", "label":"Location", "value":"", "type":"text", "required":false },
+            { "name":"location", "label":"Location", "value":"", "type":"text", "required":false },
             { "name":"term_autocomplete", "label":"Enter the desired term", "value":"", "type":"text", "required":false },
             { "name":"search_engine_btn", "label":"", "value":"Search", "type":"submit" }
     ],
@@ -43,11 +43,7 @@
     ],
     "add_comment": [
             { "name":"content", "label":"Content", "value":"", "type":"text", "required":true },
-            { "name":"stars", "label":"Poor", "value":"1", "type":"radio", "required":true },
-            { "name":"stars", "label":"Fair", "value":"2", "type":"radio", "required":true },
-            { "name":"stars", "label":"Average", "value":"3", "type":"radio", "required":true },
-            { "name":"stars", "label":"Good", "value":"4", "type":"radio", "required":true },
-            { "name":"stars", "label":"Excellent", "value":"5", "type":"radio", "required":true },
+            { "name":"stars", "label":"", "value":"", "type":"radio", "required":true, "values": { "1": "Poor", "2": "Fair", "3": "Average", "4": "Good", "5": "Excellent"} },
             { "name":"add_comment_btn", "label":"", "value":"Comment and evaluate", "type":"submit" }
     ],    
     "add_post": [

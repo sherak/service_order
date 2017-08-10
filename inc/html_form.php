@@ -175,7 +175,7 @@ class html_form {
         $this->success_msg = $msg;
     }
 
-    function get_html($action, $method='post', $new_line=true) {
+    function get_html($action, $method='post') {
         $c = new db_connection();
         $sql = "SELECT city FROM service_provider";
         $option_list = $c->query($sql);
@@ -184,8 +184,6 @@ class html_form {
             $cities_arr[$value[key($value)]] = $value[key($value)]; 
         }
         $str = $this->start_form($action, $method);
-        if(!empty($this->success_msg))
-            $str .= $this->success_msg;
         foreach($this->form as $field) {
             $checked = '';
             $str .= $field['label'];
@@ -199,7 +197,7 @@ class html_form {
             }
             else if($field['type'] == 'radio') {
                 foreach ($field['values'] as $value => $label) {
-                    $str .= '<br>' . $this->add_input($field['type'], $field['name'], $value, array('required' => $field['required'], 'checked' => $value == $field['value'])) . ' ' . $label; 
+                    $str .= $this->add_input($field['type'], $field['name'], $value, array('required' => $field['required'], 'checked' => $value == $field['value'])) . ' ' . $label; 
                 }
             }
             else if($field['type'] == 'password') {
@@ -210,9 +208,10 @@ class html_form {
             if($field['invalid']) {
                 $str .= '<div class="error">' . $field['invalid'] . '</div>';
             }
-            if($new_line)
-                $str .= '<br>';
+            $str .= '<br>';
         }
+        if(!empty($this->success_msg))
+            $str .= $this->success_msg;
         $str .= $this->end_form();
         return $str;
     }

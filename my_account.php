@@ -26,22 +26,21 @@ if(isset($_REQUEST['action'])) {
 	switch($_REQUEST['action']) {
 		case 'add_post':
 			$form_add_post->set_values($_POST);
-			if(isset($_SESSION['user']) and isset($_POST['add_post_btn'])) 
+			if(isset($_SESSION['user'])) 
 				add_post($form_add_post);
 			break;
 		case 'edit_profile':
 			$form_edit_profile->set_values($_POST);
-			if(isset($_SESSION['user']) and isset($_POST['edit_profile_btn']))
+			if(isset($_SESSION['user']))
 				edit_profile($form_edit_profile);
 			break;
 		case 'search_engine':
-			$form_search_engine->set_values($_GET);
-			if(isset($_SESSION['user']) and isset($_GET['search_engine_btn']))
-				search_engine($form_search_engine);
+			$form_search_engine->set_values($_POST);
+			search_engine($form_search_engine);
 			break;
 		case 'my_craft_firm':
 			$form_my_craft_firm->set_values($_POST);
-			if(isset($_SESSION['user']) and isset($_POST['my_craft_firm_btn'])) 
+			if(isset($_SESSION['user'])) 
 				my_craft_firm($form_my_craft_firm);
 			break;
 	}
@@ -76,15 +75,13 @@ if(!empty($sp_id)) {
 echo '</div>'; 
 
 echo '<div id="edit_profile" class="toggle" style="display:none">';
-if(isset($_REQUEST['action']) || $_REQUEST['action'] != 'edit_profile')
+if(!isset($_REQUEST['action']) || $_REQUEST['action'] != 'edit_profile')
 	$form_edit_profile->set_values($_SESSION['user']);
 echo $form_edit_profile->get_html('my_account.php?action=edit_profile');
 echo '</div>';
 
 echo '<div id="search" class="toggle" style="display:none">';
-echo $form_search_engine->get_html('search_engine', 'get');
-if(isset($_SESSION['user']) and isset($_GET['search_engine_btn'])) 
-	echo $form_search_engine->get_html('my_account.php?action=search_engine');
+echo $form_search_engine->get_html('my_account.php?action=search_engine');
 echo '</div>';
 
 echo '<div id="service" class="toggle" style="display:none">';

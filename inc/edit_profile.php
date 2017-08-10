@@ -27,9 +27,6 @@ function edit_profile($form_edit_profile) {
 
   $affected_rows = $conn->update_data('user', $sql_data, $user_id);
 
-  $data = array("name" => $name, "surname" => $surname, "email" => $email, "password" => $password, "gender" => $gender);
-  $conn->insert_data('user', $data);
-
   if($affected_rows == 1) {
   	$sql = "SELECT * FROM user WHERE user_id = '$user_id'";
   	$row = $conn->query($sql)[0];

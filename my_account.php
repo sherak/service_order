@@ -13,11 +13,13 @@ if(isset($_SESSION['user'])) {
 
 require 'inc/html_form.php';
 require 'inc/add_post.php';
+require 'inc/add_comment.php';
 require 'inc/edit_profile.php';
 require 'inc/search_engine.php';
 require 'inc/my_craft_firm.php';
 
-$form_add_post = new html_form('add_post');                        
+$form_add_post = new html_form('add_post');
+$form_add_comment = new html_form('add_comment');                        
 $form_edit_profile = new html_form('edit_profile');
 $form_search_engine = new html_form('search_engine');
 $form_my_craft_firm = new html_form('my_craft_firm');
@@ -28,6 +30,10 @@ if(isset($_REQUEST['action'])) {
 			$form_add_post->set_values($_POST);
 			if(isset($_SESSION['user'])) 
 				add_post($form_add_post);
+			break;
+		case 'add_comment':
+			$form_add_comment->set_values($_POST); 
+			add_comment($form_add_comment);
 			break;
 		case 'edit_profile':
 			$form_edit_profile->set_values($_POST);
@@ -57,6 +63,15 @@ echo '</div>';
 
 $conn = new db_connection();
 
+if(isset($_GET['action']) && $_GET['action'] == 'like') {
+	$data = array("fk_user_id" => $_GET['user_id'], "fk_sp_id" => $_GET['sp_id'], "fk_post_id" => $_GET['post_id']);
+	$conn->insert_data('likes', $data);
+}
+else if(isset($_GET['action']) && $_GET['action'] == 'dislike') {
+	$sql = "DELETE FROM likes WHERE fk_post_id = " . (int)$_GET['post_id'] . "";
+	$conn->query($sql);	
+}
+
 echo '<div id="news_feed" class="toggle" style="display:block">';
 $user_id = $_SESSION['user']['user_id'];
 $sql = "SELECT * FROM follow INNER JOIN post on post.fk_sp_id = follow.fk_sp_id INNER JOIN service_provider ON service_provider.sp_id = follow.fk_sp_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE follow.fk_user_id = '$user_id'";
@@ -65,6 +80,13 @@ if(!empty($followers)) {
 	foreach ($followers as $key => $value) {
 		echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
 		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
+		$sql = "SELECT count(*) cnt FROM likes WHERE fk_post_id = " . $value['post_id'] . "";
+		if($conn->query($sql)[0]['cnt']) 
+			echo '<a class="like_link" href="?action=dislike&post_id=' . $value['post_id'] . '&sp_id=' . $value['sp_id'] . '&user_id=' . $user_id . '">dislike</a>';	
+		else 
+			echo '<a class="like_link" href="?action=like&post_id=' . $value['post_id'] . '&sp_id=' . $value['sp_id'] . '&user_id=' . $user_id . '">like</a>';
+	echo '<br>';
+		echo $form_add_comment->get_html($_SERVER['REQUEST_URI'] . '&action=add_comment') . '<br>';
 	}
 }
 $sql = "SELECT sp_id FROM service_provider WHERE fk_user_id = '$user_id'";

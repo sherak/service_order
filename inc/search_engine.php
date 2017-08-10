@@ -91,7 +91,6 @@ function search_engine($form_search_engine) {
 	else {
 		$form_search_engine->set_error('search_engine_btn', 'We didn\'t find any match.');
 	}
-
 	json_encode($a_json);
 	flush();
 }

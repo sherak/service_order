@@ -35,7 +35,6 @@ if(isset($_GET['user_id'])) {
 	if(isset($_GET['action']) && $_GET['action'] == 'follow') {
 		$datetime = date("Y-m-d H:i:s");
 		$data = array("datetime" => $datetime, "fk_sp_id" => $sp_id, "fk_user_id" => $_SESSION['user']['user_id']);
-		print_r($data);
 		$conn->insert_data('follow', $data);
 	}
 	else if(isset($_GET['action']) && $_GET['action'] == 'unfollow') {

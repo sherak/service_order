@@ -11,5 +11,4 @@ echo '<!doctype html>
 	  		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	  		<script type="text/javascript" src="js/autocomplete.js"></script>
 	    	<script type="text/javascript" src="js/div_toggle.js"></script>
-	    	<script type="text/javascript" src="js/change_text_btn.js"></script>
 		</head>';

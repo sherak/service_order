@@ -16,6 +16,8 @@
     "search_engine": [
             { "name":"location", "label":"Location", "value":"", "type":"text", "required":false },
             { "name":"term_autocomplete", "label":"Enter the desired term", "value":"", "type":"text", "required":false },
+            { "name":"lat", "label":"Location Lat", "value":"", "type":"hidden", "required":false },
+            { "name":"lng", "label":"Location Lng", "value":"", "type":"hidden", "required":false },
             { "name":"search_engine_btn", "label":"", "value":"Search", "type":"submit" }
     ],
     "edit_profile": [
@@ -41,10 +43,14 @@
             { "name":"price", "label":"Price (optional)", "value":"", "type":"number", "required":false },
             { "name":"my_craft_firm_btn", "label":"", "value":"Open", "type":"submit" }
     ],
-    "add_comment": [
+    "add_comment_and_evaluate": [
             { "name":"content", "label":"Content", "value":"", "type":"text", "required":true },
             { "name":"stars", "label":"", "value":"", "type":"radio", "required":true, "values": { "1": "Poor", "2": "Fair", "3": "Average", "4": "Good", "5": "Excellent"} },
-            { "name":"add_comment_btn", "label":"", "value":"Comment and evaluate", "type":"submit" }
+            { "name":"add_comment_and_evaluate_btn", "label":"", "value":"Comment and evaluate", "type":"submit" }
+    ],
+    "add_comment": [
+            { "name":"content", "label":"Content", "value":"", "type":"text", "required":true },
+            { "name":"add_comment_btn", "label":"", "value":"Comment", "type":"submit" }
     ],    
     "add_post": [
             { "name":"content", "label":"Content", "value":"", "type":"text", "required":true },

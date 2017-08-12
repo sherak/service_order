@@ -5,38 +5,24 @@ require 'geocoding.php';
 function search_engine($form_search_engine) { 
 	$conn = new db_connection();
 
-	if(!isset($_REQUEST['term_autocomplete'])) 
-		exit;
-
 	// retrieve the search term that autocomplete sends 
-	$term = trim(strip_tags($_POST['term_autocomplete'])); 
+	$term = trim(strip_tags($_GET['term_autocomplete'])); 
 	// replace multiple spaces with one 
 	$term = preg_replace('/\s+/', ' ', $term);
 
-	$a_json = array();
-	$a_json_row = array();
-	 
-	$a_json_invalid = array(array("id" => "#", "value" => $term, "label" => "Only letters and digits are permitted..."));
-	$json_invalid = json_encode($a_json_invalid);
-	 
-	// allow space, any unicode letter and digit, underscore and dash                
-	if(preg_match("/[^\040\pL\pN_-]/u", $term)) {
-	 	print $json_invalid;
-	 	exit;
-	}
+print_r($_GET);
 
-	$location = !empty($_POST['location']) ? $_POST['location'] : '';
-	$url = 'https://maps.googleapis.com/maps/api/geocode/json?location=' . $location . '&	key=AIzaSyD6ajZUdUGEsQFUQKxHR1l_y4xsdGDKjdw';
-	$body = http_response($url);
-	print_r($body);	
-	$sql = "SELECT category, type FROM occupation";
-	$data = $conn->query($sql);
-	foreach($data as $key => $value) {
-		$a_json[] =  $value['category'];
-		$a_json[] = $value['type'];	
-	}
-	$a_json = array_values(array_unique($a_json));
-	$sql = "SELECT * FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') ORDER BY category, type";
+/*
+			$location = !empty($_GET['location']) ? $_GET['location'] : '';
+			$url = 'https://maps.googleapis.com/maps/api/geocode/json?location=' . $location . '&	key=AIzaSyD6ajZUdUGEsQFUQKxHR1l_y4xsdGDKjdw';
+			$body = http_response($url);
+			print_r($body);	
+
+'ORDER BY (6378.7*acos(sin(radians(' . (float)$_GET['lat'] . ')) * sin(radians(' . $lat2 . ')) + cos(radians(' . (float)$_GET['lat'] . ')) * cos(radians(' . $lat2 . ')) * cos(radians(' . $lng2 . ' - ' . (float)$_GET['lng'] . ')))' . ')';
+
+*/
+
+	$sql = "SELECT * FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') ORDER BY category, type LIMIT 20";
 	if($data = $conn->query($sql)) {
 		$categories = array();
 		$types = array();
@@ -91,6 +77,5 @@ function search_engine($form_search_engine) {
 	else {
 		$form_search_engine->set_error('search_engine_btn', 'We didn\'t find any match.');
 	}
-	json_encode($a_json);
 	flush();
 }

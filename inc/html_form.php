@@ -176,6 +176,15 @@ class html_form {
     }
 
     function get_html($action, $method='post') {
+        $hidden_fields = '';
+        if($method == 'get' && ($n = strpos($action, '?')) !== false) {
+            $par = substr($action, $n + 1);
+            $action = substr($action, 0, $n);
+            parse_str($par, $par);
+            foreach($par as $name => $val)
+                $hidden_fields .= '<input type="hidden" name="' . htmlentities($name). '" value="' . htmlentities($val) . '">';
+        }
+
         $c = new db_connection();
         $sql = "SELECT city FROM service_provider";
         $option_list = $c->query($sql);
@@ -184,9 +193,11 @@ class html_form {
             $cities_arr[$value[key($value)]] = $value[key($value)]; 
         }
         $str = $this->start_form($action, $method);
+        $str .= $hidden_fields;
         foreach($this->form as $field) {
             $checked = '';
-            $str .= $field['label'];
+            if($field['type'] != 'hidden')
+                $str .= $field['label'];
             if($field['type'] == 'submit')
                 $str .= $this->add_button($field['type'], $field['name'], $field['value']);
             else if($field['type'] == 'select') {
@@ -208,7 +219,8 @@ class html_form {
             if($field['invalid']) {
                 $str .= '<div class="error">' . $field['invalid'] . '</div>';
             }
-            $str .= '<br>';
+            if($field['type'] != 'hidden')
+                $str .= '<br>';
         }
         if(!empty($this->success_msg))
             $str .= $this->success_msg;

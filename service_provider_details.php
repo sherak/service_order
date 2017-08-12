@@ -4,18 +4,18 @@ session_start();
 
 require 'header.php';
 require 'inc/html_form.php';
-require 'inc/add_comment.php';
+require 'inc/add_comment_and_evaluate.php';
 
-$form_add_comment = new html_form('add_comment');  
+$form_add_comment_and_evaluate = new html_form('add_comment_and_evaluate');  
 $conn = new db_connection();
 
 $_SESSION['sp_id'] = 0;
 $_SESSION['previous_location_search_engine'] = $_SERVER['REQUEST_URI'];
 
 if(isset($_GET['user_id'])) {
-	if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'add_comment') {
-		$form_add_comment->set_values($_POST); 
-		add_comment($form_add_comment);
+	if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'add_comment_and_evaluate') {
+		$form_add_comment_and_evaluate->set_values($_POST); 
+		add_comment($form_add_comment_and_evaluate);
 	}
 	$user_id = $_GET['user_id'];
 	$sql = "SELECT sp_id, fk_occupation_id FROM service_provider WHERE fk_user_id = " . $user_id;
@@ -83,7 +83,7 @@ if(isset($_GET['user_id'])) {
 		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
 	}
 	if(isset($_SESSION['user']))
-		echo $form_add_comment->get_html($_SERVER['REQUEST_URI'] . '&action=add_comment');
+		echo $form_add_comment_and_evaluate->get_html($_SERVER['REQUEST_URI'] . '&action=add_comment_and_evaluate');
 	else
 		echo 'You have to sign in to write comments.';
 }

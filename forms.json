@@ -21,6 +21,7 @@
             { "name":"search_engine_btn", "label":"", "value":"Search", "type":"submit" }
     ],
     "edit_profile": [
+            { "name":"profile_picture", "label":"Add profile picture", "value":"", "type":"file", "required":false },
             { "name":"name", "label":"First Name", "value":"", "type":"text", "required":true },
             { "name":"surname", "label":"Last Name", "value":"", "type":"text", "required":true },
             { "name":"email", "label":"Email Address", "value":"", "type":"email", "required":true },

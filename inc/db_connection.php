@@ -36,7 +36,7 @@ class db_connection {
     		die(mysqli_error($conn));
 		}
 		$last_id = mysqli_insert_id($conn);
-		mysqli_close ($conn);
+		mysqli_close($conn);
 		return $last_id;
   	}
 

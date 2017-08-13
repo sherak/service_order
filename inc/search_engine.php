@@ -10,8 +10,7 @@ function search_engine($form_search_engine) {
 	// replace multiple spaces with one 
 	$term = preg_replace('/\s+/', ' ', $term);
 
-print_r($_GET);
-
+	print_r($_GET);
 /*
 			$location = !empty($_GET['location']) ? $_GET['location'] : '';
 			$url = 'https://maps.googleapis.com/maps/api/geocode/json?location=' . $location . '&	key=AIzaSyD6ajZUdUGEsQFUQKxHR1l_y4xsdGDKjdw';
@@ -22,7 +21,7 @@ print_r($_GET);
 
 */
 
-	$sql = "SELECT * FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') ORDER BY category, type LIMIT 20";
+	$sql = "SELECT * FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') ORDER BY (6378.7*acos(sin(radians(" . (float)$_GET['lat'] . ")) * sin(radians(lat)) + cos(radians(" . (float)$_GET['lat'] . ")) * cos(radians(lat)) * cos(radians(lng" . ' - ' . (float)$_GET['lng'] . ')))' . ')';
 	if($data = $conn->query($sql)) {
 		$categories = array();
 		$types = array();

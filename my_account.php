@@ -14,7 +14,7 @@ require 'inc/my_craft_firm.php';
 $conn = new db_connection();
 
 $form_add_post = new html_form('add_post');
-$form_add_comment = new html_form('add_comment');                        
+$form_add_comment = new html_form('add_comment');                       
 $form_edit_profile = new html_form('edit_profile');
 $form_search_engine = new html_form('search_engine');
 $form_my_craft_firm = new html_form('my_craft_firm');
@@ -142,7 +142,7 @@ echo '</div>';
 echo '<div id="edit_profile" class="toggle" style="display:' . $edit_profile_display . '">';
 if(!isset($_REQUEST['action']) || $_REQUEST['action'] != 'edit_profile')
 	$form_edit_profile->set_values($_SESSION['user']);
-echo $form_edit_profile->get_html('my_account.php?action=edit_profile');
+echo $form_edit_profile->get_html('my_account.php?action=edit_profile', 'post', true);
 echo '</div>';
 
 echo '<div id="search" class="toggle" style="display:' . $search_engine_display . '">';

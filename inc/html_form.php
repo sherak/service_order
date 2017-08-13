@@ -175,7 +175,7 @@ class html_form {
         $this->success_msg = $msg;
     }
 
-    function get_html($action, $method='post') {
+    function get_html($action, $method='post', $enctype=false) {
         $hidden_fields = '';
         if($method == 'get' && ($n = strpos($action, '?')) !== false) {
             $par = substr($action, $n + 1);
@@ -186,23 +186,20 @@ class html_form {
         }
 
         $c = new db_connection();
-        $sql = "SELECT city FROM service_provider";
-        $option_list = $c->query($sql);
-        $cities_arr = array();
-        foreach($option_list as $key => $value) {
-            $cities_arr[$value[key($value)]] = $value[key($value)]; 
+        if($enctype) {
+            $str = $this->start_form($action, $method, '', array('enctype' => 'multipart/form-data'));
+            $str .= $hidden_fields;
         }
-        $str = $this->start_form($action, $method);
-        $str .= $hidden_fields;
+        else {
+            $str = $this->start_form($action, $method);
+            $str .= $hidden_fields;
+        }
         foreach($this->form as $field) {
             $checked = '';
             if($field['type'] != 'hidden')
                 $str .= $field['label'];
             if($field['type'] == 'submit')
                 $str .= $this->add_button($field['type'], $field['name'], $field['value']);
-            else if($field['type'] == 'select') {
-                $str .= $this->add_select_list($field['name'], $cities_arr);
-            }
             else if($field['type'] == 'textarea') {
                 $str .= $this->add_textarea($field['name']);
             }

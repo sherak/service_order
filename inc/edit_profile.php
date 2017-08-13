@@ -16,6 +16,21 @@ function edit_profile($form_edit_profile) {
   $user = $_SESSION['user'];
   $user_id = $user['user_id'];
 
+  if($img_uploaded) {
+    $sql = "SELECT filename FROM images WHERE fk_user_id = " . (int)$user_id . "";
+    if(!empty($conn->query($sql))) {
+      $filename = $conn->query($sql)[0]['filename'];
+      unlink("img/profile_pictures/" . $filename);
+      $sql = "DELETE FROM images WHERE fk_user_id = " . (int)$user_id . "";
+    }
+    $conn->query($sql);
+    $sql_data = [
+      'filename' => $_FILES['profile_picture']['name'],
+      'fk_user_id' => $user_id
+    ];
+    $conn->insert_data('images', $sql_data);
+  }
+
   $sql_data = [
     'name' => $name,
     'surname' => $surname,

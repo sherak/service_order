@@ -65,6 +65,11 @@ require 'header.php';
 if(isset($_SESSION['user'])) {
 	$user = $_SESSION['user'];
 	echo 'Welcome ' . $user['name'];
+	$sql = "SELECT filename FROM images WHERE fk_user_id = " . (int)$_SESSION['user']['user_id'] . "";
+	if(!empty($conn->query($sql))) {
+      $filename = $conn->query($sql)[0]['filename'];
+      echo "<img width='100' height='100' src='img/profile_pictures/" . $filename . "' alt='Default profile pic'>";
+    }
 }
 
 echo '<a href="logout.php">Logout</a><br>';

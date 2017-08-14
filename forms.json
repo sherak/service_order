@@ -40,9 +40,12 @@
             { "name":"type", "label":"Work type", "value":"", "type":"text", "required":true },
             { "name":"details", "label":"Work details", "value":"", "type":"textarea", "required":true },
             { "name":"experience", "label":"Work experience", "value":"", "type":"textarea", "required":true },
-            { "name":"service", "label":"Service (optional)", "value":"", "type":"text", "required":false },
-            { "name":"price", "label":"Price (optional)", "value":"", "type":"number", "required":false },
-            { "name":"my_craft_firm_btn", "label":"", "value":"Open", "type":"submit" }
+            { "name":"my_craft_firm_btn", "label":"", "value":"Open/Edit", "type":"submit" }
+    ],
+    "service_price": [
+        { "name":"service", "label":"Service (optional)", "value":"", "type":"text", "required":false },
+        { "name":"price", "label":"Price (optional)", "value":"", "type":"number", "required":false },
+        { "name":"service_price_btn", "label":"", "value":"Add", "type":"submit" }  
     ],
     "add_comment_and_evaluate": [
             { "name":"content", "label":"Content", "value":"", "type":"text", "required":true },

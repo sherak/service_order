@@ -18,6 +18,7 @@ $form_add_comment = new html_form('add_comment');
 $form_edit_profile = new html_form('edit_profile');
 $form_search_engine = new html_form('search_engine');
 $form_my_craft_firm = new html_form('my_craft_firm');
+$form_service_price = new html_form('service_price');
 
 if(isset($_REQUEST['action'])) {
 	switch($_REQUEST['action']) {
@@ -41,8 +42,10 @@ if(isset($_REQUEST['action'])) {
 			break;
 		case 'my_craft_firm':
 			$form_my_craft_firm->set_values($_POST);
-			if(isset($_SESSION['user'])) 
+			$form_service_price->set_values($_POST);
+			if(isset($_SESSION['user'])) {
 				my_craft_firm($form_my_craft_firm);
+			}
 			break;
 		case 'ac_term':
 			$json = array();
@@ -155,8 +158,11 @@ echo $form_search_engine->get_html('my_account.php?action=search_engine', 'get')
 echo '</div>';
 
 echo '<div id="service" class="toggle" style="display:' . $my_craft_firm_display . '">';
-// TODO: if(isset($_REQUEST['action']) || $_REQUEST['action'] != 'my_craft_firm') $form_craft_firm->set_values(firm record iz baze);
-echo $form_my_craft_firm->get_html('my_craft_firm');
-if(isset($_SESSION['user']) and isset($_POST['my_craft_firm_btn'])) 
-	echo $form_my_craft_firm->get_html('my_account.php?action=my_craft_firm');
+/*if(!isset($_REQUEST['action']) || $_REQUEST['action'] != 'my_craft_firm') {
+	$sql = "SELECT * from user INNER JOIN service_provider ON user.user_id = service_provider.fk_user_id INNER JOIN occupation ON occupation.occupation_id = service_provider.fk_occupation_id WHERE user.user_id = " . (int)$_SESSION['user']['user_id'] . "";
+	print_r($conn->query($sql)); 
+	//$form_craft_firm->set_values(firm record iz baze);
+}*/
+echo $form_my_craft_firm->get_html('my_account.php?action=my_craft_firm');
+echo $form_service_price->get_html('my_account.php?action=my_craft_firm');
 echo '</div>';

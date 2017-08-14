@@ -201,7 +201,7 @@ class html_form {
             if($field['type'] == 'submit')
                 $str .= $this->add_button($field['type'], $field['name'], $field['value']);
             else if($field['type'] == 'textarea') {
-                $str .= $this->add_textarea($field['name']);
+                $str .= $this->add_textarea($field['name'], 4, 30, $field['value']);
             }
             else if($field['type'] == 'radio') {
                 foreach ($field['values'] as $value => $label) {

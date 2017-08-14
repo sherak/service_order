@@ -1,7 +1,5 @@
 <?php
 
-require 'geocoding.php';
-
 function search_engine($form_search_engine) { 
 	$conn = new db_connection();
 

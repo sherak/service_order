@@ -74,8 +74,11 @@ if(isset($_SESSION['user'])) {
       echo "<img width='100' height='100' src='img/profile_pictures/" . $filename . "' alt='Default profile pic'>";
     }
 }
+else {
+	header('Location: index.php');
+}
 
-echo '<a href="logout.php">Logout</a><br>';
+echo '&nbsp&nbsp<a href="logout.php">Logout</a><br>';
  
 echo '<div id="nav">';
 echo '<a href="#news_feed">News Feed</a><br>';
@@ -109,10 +112,10 @@ else
 
 echo '<div id="news_feed" class="toggle" style="display:' . $news_feed_display . '">';
 $user_id = $_SESSION['user']['user_id'];
-echo '<b>Create a post</b><br>';
 $sql = "SELECT sp_id FROM service_provider WHERE fk_user_id = '$user_id'";
 $sp_id = $conn->query($sql);
 if(!empty($sp_id)) {
+	echo '<b>Create a post</b><br>';
 	echo $form_add_post->get_html('my_account.php?action=add_post');
 }
 echo '<b>People you follow</b><br>';
@@ -145,6 +148,9 @@ if(!empty($followers)) {
 				echo $form_add_comment->get_html('?action=add_comment&post_id=' . $value['post_id'] . '&sp_id=' . $value['sp_id'] . '&user_id=' . $user_id . '') . '<br>';
 	}
 }
+else {
+	echo "You don't follow anyone at this moment.";
+}
 echo '</div>'; 
 
 echo '<div id="edit_profile" class="toggle" style="display:' . $edit_profile_display . '">';
@@ -158,11 +164,14 @@ echo $form_search_engine->get_html('my_account.php?action=search_engine', 'get')
 echo '</div>';
 
 echo '<div id="service" class="toggle" style="display:' . $my_craft_firm_display . '">';
-/*if(!isset($_REQUEST['action']) || $_REQUEST['action'] != 'my_craft_firm') {
+if(!isset($_REQUEST['action']) || $_REQUEST['action'] != 'my_craft_firm') {
 	$sql = "SELECT * from user INNER JOIN service_provider ON user.user_id = service_provider.fk_user_id INNER JOIN occupation ON occupation.occupation_id = service_provider.fk_occupation_id WHERE user.user_id = " . (int)$_SESSION['user']['user_id'] . "";
-	print_r($conn->query($sql)); 
-	//$form_craft_firm->set_values(firm record iz baze);
-}*/
+	if(isset($conn->query($sql)[0])) {
+		$values =  $conn->query($sql)[0];
+		$form_my_craft_firm->set_values($values);
+		$form_service_price->set_values($values);
+	}
+}
 echo $form_my_craft_firm->get_html('my_account.php?action=my_craft_firm');
 echo $form_service_price->get_html('my_account.php?action=my_craft_firm');
 echo '</div>';

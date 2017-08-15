@@ -17,7 +17,7 @@ function my_craft_firm($form_my_craft_firm) {
 	$user_id = $user['user_id'];
 
 	$conn = new db_connection();
-	$sql = "SELECT * FROM service_provider WHERE work_address = '$work_address' OR phone_number = '$phone_number'";
+	$sql = "SELECT * FROM service_provider WHERE (work_address = '$work_address' OR phone_number = '$phone_number') AND   fk_user_id != " . (int)$user_id . "";
 	if(!empty($conn->query($sql))) {
 	   	$form_my_craft_firm->set_error('phone_number', 'Given Work Address or Phone Number have already been taken.');
 	}
@@ -27,12 +27,10 @@ function my_craft_firm($form_my_craft_firm) {
 		if(isset($body['results'][0]) && isset($body['results'][0])) {
 			$lat = $body['results'][0]['geometry']['location']['lat'];
 			$lng = $body['results'][0]['geometry']['location']['lng'];
-			$data = array("category" => $category, "type" => $type, "details" => $details, "experience" => $experience);
-			print_r($data);
-			$occupation_id = $conn->insert_data('occupation', $data);
-			$data = array("work_address" => $work_address, "city" => $city, "country" => $country, "postal_code" => $postal_code, "lat" => $lat, "lng" => $lng, "phone_number" => $phone_number, "fk_occupation_id" => $occupation_id, 'fk_user_id' => $user_id);
-			$conn->insert_data('service_provider', $data);
-			print_r($data);
+			$occ_data = array("category" => $category, "type" => $type, "details" => $details, "experience" => $experience);
+			$occupation_id = $conn->insert_data('occupation', $occ_data);
+			$sp_data = array("work_address" => $work_address, "city" => $city, "country" => $country, "postal_code" => $postal_code, "lat" => $lat, "lng" => $lng, "phone_number" => $phone_number, "fk_occupation_id" => $occupation_id, 'fk_user_id' => $user_id);
+			$conn->insert_data('service_provider', $sp_data);
 		}
 		else {
 			$form_my_craft_firm->set_error('work_address', 'Enter a valid work_address');

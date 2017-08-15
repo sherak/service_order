@@ -8,7 +8,6 @@ function search_engine($form_search_engine) {
 	// replace multiple spaces with one 
 	$term = preg_replace('/\s+/', ' ', $term);
 
-	print_r($_GET);
 /*
 			$location = !empty($_GET['location']) ? $_GET['location'] : '';
 			$url = 'https://maps.googleapis.com/maps/api/geocode/json?location=' . $location . '&	key=AIzaSyD6ajZUdUGEsQFUQKxHR1l_y4xsdGDKjdw';
@@ -18,6 +17,8 @@ function search_engine($form_search_engine) {
 'ORDER BY (6378.7*acos(sin(radians(' . (float)$_GET['lat'] . ')) * sin(radians(' . $lat2 . ')) + cos(radians(' . (float)$_GET['lat'] . ')) * cos(radians(' . $lat2 . ')) * cos(radians(' . $lng2 . ' - ' . (float)$_GET['lng'] . ')))' . ')';
 
 */
+	$num_reviews = 0;
+	$avg_reviews = 0;
 
 	$sql = "SELECT * FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') ORDER BY (6378.7*acos(sin(radians(" . (float)$_GET['lat'] . ")) * sin(radians(lat)) + cos(radians(" . (float)$_GET['lat'] . ")) * cos(radians(lat)) * cos(radians(lng" . ' - ' . (float)$_GET['lng'] . ')))' . ')';
 	if($data = $conn->query($sql)) {
@@ -29,7 +30,7 @@ function search_engine($form_search_engine) {
 			array_push($categories, $value['category']);
 			array_push($types, $value['type']);
 			array_push($cities, $value['city']);
-			array_push($service_providers, array('user_id' => $value['user_id'],'name' => $value['name'], 'surname' => $value['surname'], 'work_address' => $value['work_address'], 'city' => $value['city'], 'country' => $value['country']));
+			array_push($service_providers, array('sp_id' => $value['sp_id'] ,'user_id' => $value['user_id'],'name' => $value['name'], 'surname' => $value['surname'], 'work_address' => $value['work_address'], 'city' => $value['city'], 'country' => $value['country']));
 		}
 		$str = '<b>You searched for:</b><br>';
 		$str .= 'Category: ';
@@ -61,12 +62,30 @@ function search_engine($form_search_engine) {
 		$str .= '<br><br>';
 		$str .= '<b>Results:</b><br>';
 		foreach($service_providers as $key => $value) {
+			$sql = "SELECT COUNT(*) cnt FROM comment WHERE fk_sp_id = " . (int)$value['sp_id'] . " AND stars IS NOT NULL";
+			if(isset($conn->query($sql)[0])) {
+				$num_reviews_arr = $conn->query($sql)[0];
+				$num_reviews = 0;
+				foreach ($num_reviews_arr as $key => $cnt_value) {
+					$num_reviews += (int)$cnt_value;
+				}
+			}
+			$sql = "SELECT AVG(stars) avg FROM comment WHERE fk_sp_id = " . (int)$value['sp_id'] . " AND stars IS NOT NULL";
+			if(isset($conn->query($sql)[0])) {
+				$avg_reviews = $conn->query($sql)[0]['avg'];
+			}
 			$str .= 'Name: ' . $value['name'] . '<br>';
 			$str .= 'Surname: ' . $value['surname'] . '<br>';
 			$str .= 'Work address: ' . $value['work_address'] . '<br>';
 			$str .= 'City: ' . $value['city'] . '<br>';
 			$str .= 'Country: ' . $value['country'] . '<br>';
-			$str .= '<a href="service_provider_details.php?user_id=' . $value['user_id'] . '">Show profile</a><br>';
+			if($avg_reviews)
+				$str .= (string)$avg_reviews . ' avg / ';
+			$str .= (string)$num_reviews;
+			$str .= $num_reviews == 1 ? ' review<br>' : " reviews<br>";
+			$sql = "SELECT sp_id FROM service_provider WHERE fk_user_id = " . $value['user_id'] . "";
+			$sp_id = $conn->query($sql)[0]['sp_id'];
+			$str .= '<a href="service_provider_details.php?sp_id=' . $sp_id . '&num_reviews=' . $num_reviews . '&avg_reviews=' . $avg_reviews . '">Show profile</a><br>';
 			$str .= '<br>';
 			$form_search_engine->set_success_msg($str);
 		}
@@ -74,5 +93,4 @@ function search_engine($form_search_engine) {
 	else {
 		$form_search_engine->set_error('search_engine_btn', 'We didn\'t find any match.');
 	}
-	flush();
 }

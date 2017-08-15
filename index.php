@@ -8,6 +8,7 @@ $_SESSION['previous_location'] = 'index.php';
 
 require 'inc/html_form.php';
 require 'inc/form_process.php';
+require 'inc/search_engine.php';
 
 $form_login = new html_form('login');
 $form_register = new html_form('register');
@@ -23,9 +24,14 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'register') {
 	handle_register($form_register);
 }
 
+if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'search_engine') {
+	$form_search_engine->set_values($_REQUEST);
+	search_engine($form_search_engine);
+}
+
 echo $form_login->get_html('index.php?action=login');
 
 echo $form_register->get_html('index.php?action=register');
 
-echo $form_search_engine->get_html('search_engine.php', 'get');
+echo $form_search_engine->get_html('index.php?action=search_engine', 'get');
 

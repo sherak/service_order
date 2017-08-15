@@ -208,6 +208,13 @@ class html_form {
                     $str .= $this->add_input($field['type'], $field['name'], $value, array('required' => $field['required'], 'checked' => $value == $field['value'])) . ' ' . $label; 
                 }
             }
+            else if($field['type'] == 'select') {
+                $value_assoc = array();
+                foreach($field['values'] as $value) {
+                     $value_assoc[$value] = $value;
+                }
+                $str .= $this->add_select_list($field['name'], $value_assoc);
+            }
             else if($field['type'] == 'password') {
                 $str .= $this->add_input($field['type'], $field['name'], '', array('required' => $field['required'], $checked => $checked));
             }
@@ -216,7 +223,7 @@ class html_form {
             if($field['invalid']) {
                 $str .= '<div class="error">' . $field['invalid'] . '</div>';
             }
-            if($field['type'] != 'hidden')
+            if($field['type'] != 'hidden' && $field['type'] != 'select')
                 $str .= '<br>';
         }
         if(!empty($this->success_msg))

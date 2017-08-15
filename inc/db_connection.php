@@ -40,7 +40,7 @@ class db_connection {
 		return $last_id;
   	}
 
-  	function update_data($table, $data, $column_id) {
+  	function update_data($table, $data, $column_name, $column_id) {
   		$columns = array_keys($data);
 		$values = array_values($data);
   		$column_value = '';
@@ -51,7 +51,7 @@ class db_connection {
        		else
        			$column_value .= "',";
        	}
-	    $sql = "UPDATE" . " " . $table . " SET " . $column_value . " WHERE " . $table . "." . $table . "_id=" . $column_id;
+	    $sql = "UPDATE" . " " . $table . " SET " . $column_value . " WHERE " . $column_name . "=" . $column_id;
 	    $result = mysqli_query($this->conn, $sql);
 	    if($result === FALSE) { 
     		die(mysqli_error($this->conn));

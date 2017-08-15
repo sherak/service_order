@@ -48,7 +48,7 @@ function edit_profile($form_edit_profile) {
     }
   }
 
-  $affected_rows = $conn->update_data('user', $sql_data, $user_id);
+  $affected_rows = $conn->update_data('user', $sql_data, 'user_id', $user_id);
   if($affected_rows) {
   	$sql = "SELECT * FROM user WHERE user_id = '$user_id'";
   	$row = $conn->query($sql)[0];

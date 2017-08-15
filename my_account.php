@@ -41,6 +41,7 @@ if(isset($_REQUEST['action'])) {
 			search_engine($form_search_engine);
 			break;
 		case 'my_craft_firm':
+			print_r($_POST);
 			$form_my_craft_firm->set_values($_POST);
 			$form_service_price->set_values($_POST);
 			if(isset($_SESSION['user'])) {

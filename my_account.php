@@ -15,7 +15,10 @@ $conn = new db_connection();
 
 $form_add_post = new html_form('add_post');
 $form_add_comment = new html_form('add_comment');                       
+
 $form_edit_profile = new html_form('edit_profile');
+$form_edit_profile->set_values($_SESSION['user']);
+
 $form_search_engine = new html_form('search_engine');
 $form_my_craft_firm = new html_form('my_craft_firm');
 $form_service_price = new html_form('service_price');
@@ -41,12 +44,14 @@ if(isset($_REQUEST['action'])) {
 			search_engine($form_search_engine);
 			break;
 		case 'my_craft_firm':
-			print_r($_POST);
 			$form_my_craft_firm->set_values($_POST);
-			$form_service_price->set_values($_POST);
-			if(isset($_SESSION['user'])) {
+			if(isset($_SESSION['user'])) 
 				my_craft_firm($form_my_craft_firm);
-			}
+			break;
+		case 'service_price':
+			$form_service_price->set_values($_POST);
+			if(isset($_SESSION['user'])) 
+				service_price($form_service_price);
 			break;
 		case 'ac_term':
 			$json = array();
@@ -69,23 +74,26 @@ require 'header.php';
 if(isset($_SESSION['user'])) {
 	$user = $_SESSION['user'];
 	echo 'Welcome ' . $user['name'];
+	echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="logout.php">Logout</a><br>';
 	$sql = "SELECT filename FROM images WHERE fk_user_id = " . (int)$_SESSION['user']['user_id'] . "";
-	if(!empty($conn->query($sql))) {
-      $filename = $conn->query($sql)[0]['filename'];
+	$res = $conn->query($sql);
+	if(!empty($res)) {
+      $filename = $res[0]['filename'];
       echo "<img width='100' height='100' src='img/profile_pictures/" . $filename . "' alt='Default profile pic'>";
+    } 
+    else {
+    	echo "<img width='100' height='100' src='img/profile_pictures/no_picture.png' alt='Default profile pic'>";	
     }
 }
 else {
 	header('Location: index.php');
 }
-
-echo '&nbsp&nbsp<a href="logout.php">Logout</a><br>';
  
 echo '<div id="nav">';
 echo '<a href="#news_feed">News Feed</a><br>';
 echo '<a href="#edit_profile">Edit profile</a><br>';
 echo '<a href="#search">Search</a><br>';
-echo '<a href="#service">Provide your service</a><br>';
+echo '<a href="#my_craft_firm">Provide your service</a><br>';
 echo '</div>';
 
 if(isset($_GET['action']) && $_GET['action'] == 'like') {
@@ -155,8 +163,6 @@ else {
 echo '</div>'; 
 
 echo '<div id="edit_profile" class="toggle" style="display:' . $edit_profile_display . '">';
-if(!isset($_REQUEST['action']) || $_REQUEST['action'] != 'edit_profile')
-	$form_edit_profile->set_values($_SESSION['user']);
 echo $form_edit_profile->get_html('my_account.php?action=edit_profile', 'post', true);
 echo '</div>';
 
@@ -164,15 +170,23 @@ echo '<div id="search" class="toggle" style="display:' . $search_engine_display 
 echo $form_search_engine->get_html('my_account.php?action=search_engine', 'get');
 echo '</div>';
 
-echo '<div id="service" class="toggle" style="display:' . $my_craft_firm_display . '">';
+echo '<div id="my_craft_firm" class="toggle" style="display:' . $my_craft_firm_display . '">';
 if(!isset($_REQUEST['action']) || $_REQUEST['action'] != 'my_craft_firm') {
 	$sql = "SELECT * from user INNER JOIN service_provider ON user.user_id = service_provider.fk_user_id INNER JOIN occupation ON occupation.occupation_id = service_provider.fk_occupation_id WHERE user.user_id = " . (int)$_SESSION['user']['user_id'] . "";
-	if(isset($conn->query($sql)[0])) {
-		$values =  $conn->query($sql)[0];
+	$res = $conn->query($sql);
+	if(isset($res)) {
+		$values =  $res[0];
+		$mch = [];
+		if(preg_match('/^(\d+):(\d+)[\s-]+(\d+):(\d+)$/', $values['working_hours'], $mch)) {
+			$values['hours_from'] = $mch[1];
+			$values['minutes_from'] = $mch[2];
+			$values['hours_to'] = $mch[3];
+			$values['minutes_to'] = $mch[4];
+		}
 		$form_my_craft_firm->set_values($values);
 		$form_service_price->set_values($values);
 	}
 }
 echo $form_my_craft_firm->get_html('my_account.php?action=my_craft_firm');
-echo $form_service_price->get_html('my_account.php?action=my_craft_firm');
+echo $form_service_price->get_html('my_account.php?action=service_price');
 echo '</div>';

@@ -35,17 +35,19 @@ function my_craft_firm($form_my_craft_firm) {
 			$lng = $body['results'][0]['geometry']['location']['lng'];
 			$occ_data = array("category" => $category, "type" => $type, "details" => $details, "experience" => $experience);
 			$sp_data = array("working_hours" => $working_hours, "work_address" => $work_address, "city" => $city, "country" => $country, "postal_code" => $postal_code, "lat" => $lat, "lng" => $lng, "phone_number" => $phone_number, "fk_occupation_id" => 0, 'fk_user_id' => $user_id);
-			$sql = "SELECT fk_occupation_id FROM service_provider WHERE fk_user_id = " . (int)$user_id . "";
-			if(!$conn->query($sql)[0]) {
+			$sql = "SELECT fk_occupation_id FROM service_provider WHERE fk_user_id = " . (int)$user_id;
+			$res = $conn->query($sql);
+			if(empty($res)) {
 				$occupation_id = $conn->insert_data('occupation', $occ_data);
 				$sp_data['fk_occupation_id'] = $occupation_id;
 				$conn->insert_data('service_provider', $sp_data);
+				header("Location: my_account.php#my_craft_firm");
 			}
 			else {
-				$occupation_id = $conn->query($sql)[0]['fk_occupation_id'];
-				$conn->update('occupation', $occ_data, 'occupation_id', $occupation_id);
+				$occupation_id = $res[0]['fk_occupation_id'];
+				$conn->update_data('occupation', $occ_data, 'occupation_id', $occupation_id);
 				$sp_data['fk_occupation_id'] = $occupation_id;
-				$conn->update('service_provider', $sp_data, 'fk_user_id', $user_id);
+				$conn->update_data('service_provider', $sp_data, 'fk_user_id', $user_id);
 			}
 		}
 		else {
@@ -53,6 +55,7 @@ function my_craft_firm($form_my_craft_firm) {
 		}
 	}
 	if(!$form_my_craft_firm->check_errors()) {
-			$form_my_craft_firm->set_success_msg('Successfully opened/edited.');
+		$form_my_craft_firm->set_success_msg('Successfully opened/edited.');
+		header("Location: my_account.php#my_craft_firm");
 	}
 }

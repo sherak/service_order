@@ -20,7 +20,7 @@ function search_engine($form_search_engine) {
 	$num_reviews = 0;
 	$avg_reviews = 0;
 
-	$sql = "SELECT * FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') ORDER BY (6378.7*acos(sin(radians(" . (float)$_GET['lat'] . ")) * sin(radians(lat)) + cos(radians(" . (float)$_GET['lat'] . ")) * cos(radians(lat)) * cos(radians(lng" . ' - ' . (float)$_GET['lng'] . ')))' . ')';
+	$sql = "SELECT * FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') ORDER BY (6378.7*acos(sin(radians(" . (float)$_GET['lat'] . ")) * sin(radians(lat)) + cos(radians(" . (float)$_GET['lat'] . ")) * cos(radians(lat)) * cos(radians(lng" . ' - ' . (float)$_GET['lng'] . ')))' . ')' . "LIMIT 15";
 	if($data = $conn->query($sql)) {
 		$categories = array();
 		$types = array();
@@ -30,7 +30,13 @@ function search_engine($form_search_engine) {
 			array_push($categories, $value['category']);
 			array_push($types, $value['type']);
 			array_push($cities, $value['city']);
-			array_push($service_providers, array('sp_id' => $value['sp_id'] ,'user_id' => $value['user_id'],'name' => $value['name'], 'surname' => $value['surname'], 'work_address' => $value['work_address'], 'city' => $value['city'], 'country' => $value['country']));
+			$sql = "SELECT filename FROM images WHERE fk_user_id = " . (int)$value['user_id'];
+			$res = $conn->query($sql);
+			if($res) 
+				$value['filename'] = $res[0]['filename'];
+			else 
+				$value['filename'] = 'no_picture.png';
+			array_push($service_providers, array('sp_id' => $value['sp_id'] ,'user_id' => $value['user_id'],'name' => $value['name'], 'surname' => $value['surname'], 'work_address' => $value['work_address'], 'city' => $value['city'], 'country' => $value['country'], 'filename' => $value['filename']));
 		}
 		$str = '<b>You searched for:</b><br>';
 		$str .= 'Category: ';
@@ -60,20 +66,23 @@ function search_engine($form_search_engine) {
 				$str .= $city . ', ';
 		}
 		$str .= '<br><br>';
-		$str .= '<b>Results:</b><br>';
+		$str .= '<b>Results sorted by entered location:</b><br>';
 		foreach($service_providers as $key => $value) {
 			$sql = "SELECT COUNT(*) cnt FROM comment WHERE fk_sp_id = " . (int)$value['sp_id'] . " AND stars IS NOT NULL";
-			if(isset($conn->query($sql)[0])) {
-				$num_reviews_arr = $conn->query($sql)[0];
+			$res = $conn->query($sql);
+			if(isset($res)) {
+				$num_reviews_arr = $res[0];
 				$num_reviews = 0;
 				foreach ($num_reviews_arr as $key => $cnt_value) {
 					$num_reviews += (int)$cnt_value;
 				}
 			}
 			$sql = "SELECT AVG(stars) avg FROM comment WHERE fk_sp_id = " . (int)$value['sp_id'] . " AND stars IS NOT NULL";
-			if(isset($conn->query($sql)[0])) {
-				$avg_reviews = $conn->query($sql)[0]['avg'];
+			$res = $conn->query($sql);
+			if(isset($res)) {
+				$avg_reviews = $res[0]['avg'];
 			}
+      		$str .= "<img width='100' height='100' src='img/profile_pictures/" . $value['filename'] . "' alt='Default profile pic'><br>";
 			$str .= 'Name: ' . $value['name'] . '<br>';
 			$str .= 'Surname: ' . $value['surname'] . '<br>';
 			$str .= 'Work address: ' . $value['work_address'] . '<br>';
@@ -92,5 +101,6 @@ function search_engine($form_search_engine) {
 	} 
 	else {
 		$form_search_engine->set_error('search_engine_btn', 'We didn\'t find any match.');
+		header("Location: my_account.php#search");
 	}
 }

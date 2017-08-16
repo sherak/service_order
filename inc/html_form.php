@@ -145,6 +145,10 @@ class html_form {
         return "</form>";
     }
 
+    function get_value($name) {
+        return isset($this->form[$name]['value']) ? $this->form[$name]['value'] : null;
+    }
+
     function set_value($name, $value) {
         $this->form[$name]['value'] = $value;
     }
@@ -163,8 +167,9 @@ class html_form {
     function check_errors() {
         $form_valid = true;
         foreach($this->form as $field) {
-            if(isset($field['required']) && $field['required'] && !$field['value'])
-                $field['invalid'] = $field['error'] ?: $field['label'] . ' is required.';
+            if(isset($field['required']) && $field['required'] && !$field['value']) {
+                $field['invalid'] = isset($field['error']) && $field['error'] ?: $field['label'] . ' is required.';
+            }
             if($field['invalid'])
                 $form_valid = false;
         }
@@ -213,7 +218,7 @@ class html_form {
                 foreach($field['values'] as $value) {
                      $value_assoc[$value] = $value;
                 }
-                $str .= $this->add_select_list($field['name'], $value_assoc);
+                $str .= $this->add_select_list($field['name'], $value_assoc, true, $field['value']);
             }
             else if($field['type'] == 'password') {
                 $str .= $this->add_input($field['type'], $field['name'], '', array('required' => $field['required'], $checked => $checked));

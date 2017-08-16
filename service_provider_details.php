@@ -25,6 +25,13 @@ if(isset($_GET['sp_id'])) {
 	$sql = "SELECT * FROM user INNER JOIN service_provider ON service_provider.fk_user_id = '$fk_user_id' INNER JOIN occupation ON occupation.occupation_id = '$fk_occupation_id' WHERE user.user_id = '$fk_user_id' ORDER BY category, type"; 
 	$profile_details = $conn->query($sql)[0];
 	echo '<b>Profile details</b><br>';
+	$sql = "SELECT filename FROM images WHERE fk_user_id = " . (int)$fk_user_id;
+		$res = $conn->query($sql);
+		if($res) 
+			$value['filename'] = $res[0]['filename'];
+		else 
+			$value['filename'] = 'no_picture.png';
+	echo "<img width='100' height='100' src='img/profile_pictures/" . $value['filename'] . "' alt='Default profile pic'><br>";
 	echo 'Name: ' . $profile_details['name'] . '<br>';
 	echo 'Surname: ' . $profile_details['surname'] . '<br>';
 	echo 'Work address: ' . $profile_details['work_address'] . '<br>';

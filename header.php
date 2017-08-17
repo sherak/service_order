@@ -13,4 +13,11 @@ echo '<!doctype html>
 	  		<script type="text/javascript" src="js/autocomplete.js"></script>
 	    	<script type="text/javascript" src="js/div_toggle.js"></script>
             <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD6ajZUdUGEsQFUQKxHR1l_y4xsdGDKjdw"></script>
+            <script type="text/javascript" src="js/google_map.js"></script>
+            <style>
+                #map {
+                    height: 400px;
+                    width: 400px;
+                }
+            </style>
 		</head>';

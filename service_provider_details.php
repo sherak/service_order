@@ -73,9 +73,9 @@ if(isset($_GET['sp_id'])) {
 	echo '<br>';
 
 	echo '<div id="nav">';
-    echo '<a href="#general">General</a>&nbsp';
-    echo '<a href="#posts">Posts</a>&nbsp';
-    echo '<a href="#purchase">Purchase</a>&nbsp';
+    echo '<a href="#general">General</a>&nbsp;';
+    echo '<a href="#posts">Posts</a>&nbsp;';
+    echo '<a href="#purchase">Purchase</a>&nbsp;';
 	echo '</div>';
 
 	$general_str = 'Work details: ' . $profile_details['details'] . '<br>';

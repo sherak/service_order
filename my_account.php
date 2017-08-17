@@ -40,7 +40,7 @@ if(isset($_REQUEST['action'])) {
 				edit_profile($form_edit_profile);
 			break;
 		case 'search_engine':
-			$form_search_engine->set_values($_POST);
+			$form_search_engine->set_values($_GET);
 			search_engine($form_search_engine);
 			break;
 		case 'my_craft_firm':
@@ -74,7 +74,7 @@ require 'header.php';
 if(isset($_SESSION['user'])) {
 	$user = $_SESSION['user'];
 	echo 'Welcome ' . $user['name'];
-	echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="logout.php">Logout</a><br>';
+	echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="logout.php">Logout</a><br>';
 	$sql = "SELECT filename FROM images WHERE fk_user_id = " . (int)$_SESSION['user']['user_id'] . "";
 	$res = $conn->query($sql);
 	if(!empty($res)) {

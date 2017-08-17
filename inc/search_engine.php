@@ -17,15 +17,17 @@ function search_engine($form_search_engine) {
 'ORDER BY (6378.7*acos(sin(radians(' . (float)$_GET['lat'] . ')) * sin(radians(' . $lat2 . ')) + cos(radians(' . (float)$_GET['lat'] . ')) * cos(radians(' . $lat2 . ')) * cos(radians(' . $lng2 . ' - ' . (float)$_GET['lng'] . ')))' . ')';
 
 */
+
 	$num_reviews = 0;
 	$avg_reviews = 0;
-
-	$sql = "SELECT * FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') ORDER BY (6378.7*acos(sin(radians(" . (float)$_GET['lat'] . ")) * sin(radians(lat)) + cos(radians(" . (float)$_GET['lat'] . ")) * cos(radians(lat)) * cos(radians(lng" . ' - ' . (float)$_GET['lng'] . ')))' . ')' . "LIMIT 15";
-	if($data = $conn->query($sql)) {
+	$distance = '(6378.7*acos(sin(radians(' . (float)$_GET['lat'] . ')) * sin(radians(lat)) + cos(radians(' . (float)$_GET['lat'] . ')) * cos(radians(lat)) * cos(radians(lng' . ' - ' . (float)$_GET['lng'] . ')))' . ')';
+	$sql = "SELECT *," . $distance . " distance FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') ORDER BY distance LIMIT 15";
+	if($data = $conn->query($sql)) { 
 		$categories = array();
 		$types = array();
 		$cities = array();
 		$service_providers = array();
+		$lat_lng = array();
 		foreach($data as $key => $value) {
 			array_push($categories, $value['category']);
 			array_push($types, $value['type']);
@@ -36,8 +38,11 @@ function search_engine($form_search_engine) {
 				$value['filename'] = $res[0]['filename'];
 			else 
 				$value['filename'] = 'no_picture.png';
-			array_push($service_providers, array('sp_id' => $value['sp_id'] ,'user_id' => $value['user_id'],'name' => $value['name'], 'surname' => $value['surname'], 'work_address' => $value['work_address'], 'city' => $value['city'], 'country' => $value['country'], 'filename' => $value['filename']));
+			array_push($service_providers, array('sp_id' => $value['sp_id'] ,'user_id' => $value['user_id'],'name' => $value['name'], 'surname' => $value['surname'], 'work_address' => $value['work_address'], 'city' => $value['city'], 'country' => $value['country'], 'filename' => $value['filename'], 'distance' => $value['distance']));
+			array_push($lat_lng, array('lat' => (float)$value['lat'], 'lng' => (float)$value['lng']));
 		}
+		$lat_lng_json = json_encode($lat_lng);
+		echo '<div id="lat_lng" data-latlng=' . $lat_lng_json . '></div>';
 		$str = '<b>You searched for:</b><br>';
 		$str .= 'Category: ';
 		$categories = array_unique($categories);
@@ -88,6 +93,7 @@ function search_engine($form_search_engine) {
 			$str .= 'Work address: ' . $value['work_address'] . '<br>';
 			$str .= 'City: ' . $value['city'] . '<br>';
 			$str .= 'Country: ' . $value['country'] . '<br>';
+			$str .= 'Distance: ' . round($value['distance'], 2) . ' km<br>';
 			if($avg_reviews)
 				$str .= (string)$avg_reviews . ' avg / ';
 			$str .= (string)$num_reviews;
@@ -96,8 +102,9 @@ function search_engine($form_search_engine) {
 			$sp_id = $conn->query($sql)[0]['sp_id'];
 			$str .= '<a href="service_provider_details.php?sp_id=' . $sp_id . '&num_reviews=' . $num_reviews . '&avg_reviews=' . $avg_reviews . '">Show profile</a><br>';
 			$str .= '<br>';
-			$form_search_engine->set_success_msg($str);
 		}
+		$str .= '<div id="map"></div>';
+		$form_search_engine->set_success_msg($str);
 	} 
 	else {
 		$form_search_engine->set_error('search_engine_btn', 'We didn\'t find any match.');

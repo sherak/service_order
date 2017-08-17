@@ -24,8 +24,17 @@ $(function() {
 			});
 		});
 
+	var pathname = window.location.pathname;
+	
+	if(pathname == '/service_order/my_account.php') {
+		pathname = 'my_account.php';
+	}
+	else if(pathname == '/service_order/index.php') {
+		pathname = 'index.php';
+	}
+
 	fldTerm.autocomplete({
-  		source: 'my_account.php?action=ac_term'
+  		source: pathname + '?action=ac_term'
 	});
 /*
 	var ,

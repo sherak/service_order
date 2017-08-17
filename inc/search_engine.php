@@ -8,18 +8,14 @@ function search_engine($form_search_engine) {
 	// replace multiple spaces with one 
 	$term = preg_replace('/\s+/', ' ', $term);
 
-/*
-			$location = !empty($_GET['location']) ? $_GET['location'] : '';
-			$url = 'https://maps.googleapis.com/maps/api/geocode/json?location=' . $location . '&	key=AIzaSyD6ajZUdUGEsQFUQKxHR1l_y4xsdGDKjdw';
-			$body = http_response($url);
-			print_r($body);	
-
-'ORDER BY (6378.7*acos(sin(radians(' . (float)$_GET['lat'] . ')) * sin(radians(' . $lat2 . ')) + cos(radians(' . (float)$_GET['lat'] . ')) * cos(radians(' . $lat2 . ')) * cos(radians(' . $lng2 . ' - ' . (float)$_GET['lng'] . ')))' . ')';
-
-*/
-
 	$num_reviews = 0;
 	$avg_reviews = 0;
+	$no_location_str = '';
+	if(!$_GET['lat'] && !$_GET['lng']) {
+		$_GET['lat'] = 45.815011;
+		$_GET['lng'] = 15.981919;
+		$no_location_str =  'You didn\'t enter a location. The default location is set to Zagreb.<br><br>';
+	}
 	$distance = '(6378.7*acos(sin(radians(' . (float)$_GET['lat'] . ')) * sin(radians(lat)) + cos(radians(' . (float)$_GET['lat'] . ')) * cos(radians(lat)) * cos(radians(lng' . ' - ' . (float)$_GET['lng'] . ')))' . ')';
 	$sql = "SELECT *," . $distance . " distance FROM occupation INNER JOIN service_provider ON occupation.occupation_id = service_provider.fk_occupation_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE (category LIKE '%$term%' OR type LIKE '%$term%') ORDER BY distance LIMIT 15";
 	if($data = $conn->query($sql)) { 
@@ -28,6 +24,7 @@ function search_engine($form_search_engine) {
 		$cities = array();
 		$service_providers = array();
 		$lat_lng = array();
+		array_push($lat_lng, array('lat' => (float)$_GET['lat'], 'lng' => (float)$_GET['lng']));
 		foreach($data as $key => $value) {
 			array_push($categories, $value['category']);
 			array_push($types, $value['type']);
@@ -43,7 +40,8 @@ function search_engine($form_search_engine) {
 		}
 		$lat_lng_json = json_encode($lat_lng);
 		echo '<div id="lat_lng" data-latlng=' . $lat_lng_json . '></div>';
-		$str = '<b>You searched for:</b><br>';
+		$str =  $no_location_str;
+		$str .= '<b>Your search:</b><br>';
 		$str .= 'Category: ';
 		$categories = array_unique($categories);
 		foreach($categories as $category) {
@@ -108,6 +106,5 @@ function search_engine($form_search_engine) {
 	} 
 	else {
 		$form_search_engine->set_error('search_engine_btn', 'We didn\'t find any match.');
-		header("Location: my_account.php#search");
 	}
 }

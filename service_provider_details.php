@@ -97,7 +97,7 @@ if(isset($_GET['sp_id'])) {
 	$comments = $conn->query($sql);
 	foreach ($comments as $key => $value) {
 		echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
-		echo 'Content: ' . $value['content'] . ' Evaluation:' . $value['stars'] . ' Date: ' . $value['datetime'] . '<br>';
+		echo 'Content: ' . $value['content'] . ' Evaluation: ' . $value['stars'] . ' Date: ' . $value['datetime'] . '<br>';
 	}
 	if(isset($_SESSION['user']))
 		echo $form_add_comment_and_evaluate->get_html($_SERVER['REQUEST_URI'] . '&action=add_comment_and_evaluate');

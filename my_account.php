@@ -55,11 +55,11 @@ if(isset($_REQUEST['action'])) {
 			break;
 		case 'ac_term':
 			$json = array();
-			$res = $conn->query("SELECT distinct category FROM occupation where category like '%" . $conn->escape($_GET['term']) . "%'");
+			$res = $conn->query("SELECT DISTINCT category FROM occupation WHERE category LIKE '%" . $conn->escape($_GET['term']) . "%'");
 			foreach($res as $row)
 				$json[] = $row['category'];
 
-			$res = $conn->query("SELECT distinct type FROM occupation where type like '%" . $conn->escape($_GET['term']) . "%'");
+			$res = $conn->query("SELECT DISTINCT type FROM occupation WHERE type LIKE '%" . $conn->escape($_GET['term']) . "%'");
 			foreach($res as $row)
 				$json[] = $row['type'];
 			
@@ -124,10 +124,22 @@ $user_id = $_SESSION['user']['user_id'];
 $sql = "SELECT sp_id FROM service_provider WHERE fk_user_id = '$user_id'";
 $sp_id = $conn->query($sql);
 if(!empty($sp_id)) {
-	echo '<b>Create a post</b><br>';
+	echo '<br><b>Create a post</b><br>';
 	echo $form_add_post->get_html('my_account.php?action=add_post');
+	echo '<br><b>Your posts</b><br>';
+	$sql = "SELECT * FROM post WHERE fk_sp_id = " . (int)$sp_id[0]['sp_id'] . " ORDER BY datetime";
+	$posts = $conn->query($sql);
 }
-echo '<b>People you follow</b><br>';
+foreach ($posts as $key => $value) {
+		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'];
+		$sql = "SELECT count(*) cnt FROM likes WHERE fk_post_id = " . $value['post_id'] . "";
+		$num_likes = $conn->query($sql)[0]['cnt'];
+		if($num_likes == 1)
+			echo '&nbsp;' . $num_likes . ' like<br>;';
+		else
+			echo '&nbsp;' . $num_likes . ' likes<br>';
+}
+echo '<br><b>People you follow</b><br>';
 $sql = "SELECT * FROM follow INNER JOIN post on post.fk_sp_id = follow.fk_sp_id INNER JOIN service_provider ON service_provider.sp_id = follow.fk_sp_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE follow.fk_user_id = '$user_id'";
 $followers = $conn->query($sql);
 if(!empty($followers)) {
@@ -152,21 +164,24 @@ if(!empty($followers)) {
 				echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
 				echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
 			}
+			echo '<br>';	
 		}
 		if(isset($value['post_id']) && isset($value['sp_id']))
 				echo $form_add_comment->get_html('?action=add_comment&post_id=' . $value['post_id'] . '&sp_id=' . $value['sp_id'] . '&user_id=' . $user_id . '') . '<br>';
 	}
 }
 else {
-	echo "You don't follow anyone at this moment.";
+	echo 'You don\'t follow anyone at this moment.';
 }
 echo '</div>'; 
 
 echo '<div id="edit_profile" class="toggle" style="display:' . $edit_profile_display . '">';
+echo '<br><b>My profile</b><br>';
 echo $form_edit_profile->get_html('my_account.php?action=edit_profile', 'post', true);
 echo '</div>';
 
 echo '<div id="search" class="toggle" style="display:' . $search_engine_display . '">';
+echo '<br><b>Search service providers</b><br>';
 echo $form_search_engine->get_html('my_account.php?action=search_engine', 'get');
 echo '</div>';
 
@@ -187,6 +202,8 @@ if(!isset($_REQUEST['action']) || $_REQUEST['action'] != 'my_craft_firm') {
 		$form_service_price->set_values($values);
 	}
 }
+echo '<br><b>My craft/firm</b><br>';
 echo $form_my_craft_firm->get_html('my_account.php?action=my_craft_firm');
+echo '<br><b>(Not implemented)</b><br>';
 echo $form_service_price->get_html('my_account.php?action=service_price');
 echo '</div>';

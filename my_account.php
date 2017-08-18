@@ -79,10 +79,10 @@ if(isset($_SESSION['user'])) {
 	$res = $conn->query($sql);
 	if(!empty($res)) {
       $filename = $res[0]['filename'];
-      echo "<img width='100' height='100' src='img/profile_pictures/" . $filename . "' alt='Default profile pic'>";
+      echo "<img width='150' height='150' src='img/profile_pictures/" . $filename . "' alt='Default profile pic'>";
     } 
     else {
-    	echo "<img width='100' height='100' src='img/profile_pictures/no_picture.png' alt='Default profile pic'>";	
+    	echo "<img width='150' height='150' src='img/profile_pictures/no_picture.png' alt='Default profile pic'>";	
     }
 }
 else {
@@ -129,15 +129,21 @@ if(!empty($sp_id)) {
 	echo '<br><b>Your posts</b><br>';
 	$sql = "SELECT * FROM post WHERE fk_sp_id = " . (int)$sp_id[0]['sp_id'] . " ORDER BY datetime";
 	$posts = $conn->query($sql);
-}
-foreach ($posts as $key => $value) {
-		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'];
-		$sql = "SELECT count(*) cnt FROM likes WHERE fk_post_id = " . $value['post_id'] . "";
-		$num_likes = $conn->query($sql)[0]['cnt'];
-		if($num_likes == 1)
-			echo '&nbsp;' . $num_likes . ' like<br>;';
-		else
-			echo '&nbsp;' . $num_likes . ' likes<br>';
+	if(!empty($posts)) {
+		foreach($posts as $key => $value) {
+				echo '<i>Content:</i> ' . $value['content'] . '<br> <i>Date:</i> ' . $value['datetime'];
+				$sql = "SELECT count(*) cnt FROM likes WHERE fk_post_id = " . $value['post_id'] . "";
+				$num_likes = $conn->query($sql)[0]['cnt'];
+				if($num_likes == 1)
+					echo '<br>' . $num_likes . ' <i>like</i><br>;';
+				else
+					echo '<br>' . $num_likes . ' <i>likes</i><br>';
+				echo '<br>';
+		}
+	}
+	else {
+		echo 'You didn\'t post anything yet.<br>';
+	}
 }
 echo '<br><b>People you follow</b><br>';
 $sql = "SELECT * FROM follow INNER JOIN post on post.fk_sp_id = follow.fk_sp_id INNER JOIN service_provider ON service_provider.sp_id = follow.fk_sp_id INNER JOIN user ON user.user_id = service_provider.fk_user_id WHERE follow.fk_user_id = '$user_id'";
@@ -145,24 +151,31 @@ $followers = $conn->query($sql);
 if(!empty($followers)) {
 	foreach ($followers as $key => $value) {
 		echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
-		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
+		echo '<br><i>Content:</i> ' . $value['content'] . '<br><i>Date:</i> ' . $value['datetime'] . '<br>';
 		$sql = "SELECT count(*) cnt FROM likes WHERE fk_post_id = " . $value['post_id'] . "";
 		$num_likes = $conn->query($sql)[0]['cnt'];
-		if($num_likes == 1)
-			echo $num_likes . ' like&nbsp';
+		$sql = "SELECT count(*) cnt FROM likes WHERE fk_user_id = " . $user_id . " AND fk_post_id = " . $value['post_id'];
+		$check_like = $conn->query($sql)[0]['cnt'];
+		if($num_likes == 1 )
+			echo $num_likes . ' <i>like</i>&nbsp';
 		else
-			echo $num_likes . ' likes&nbsp';
-		if($num_likes) 
+			echo $num_likes . ' <i>likes</i>&nbsp';
+		if($num_likes && $check_like) 
 			echo '<a class="like_link" href="?action=dislike&post_id=' . $value['post_id'] . '&sp_id=' . $value['sp_id'] . '&user_id=' . $user_id . '">dislike</a>';	
 		else 
 			echo '<a class="like_link" href="?action=like&post_id=' . $value['post_id'] . '&sp_id=' . $value['sp_id'] . '&user_id=' . $user_id . '">like</a>';
 		echo '<br><a class="comments_link" href="?action=comments&post_id=' . $value['post_id'] . '&sp_id=' . $value['sp_id'] . '&user_id=' . $user_id . '">Comments</a><br>';
-		if(isset($_GET['action']) && $_GET['action'] == 'comments') {
+		if(isset($_GET['action']) && $_GET['action'] == 'comments' && $_GET['post_id'] == $value['post_id']) {
 			$sql = "SELECT * FROM comment INNER JOIN user on user.user_id = comment.fk_user_id WHERE fk_post_id =" . $value['post_id'] . "";
 			$comments = $conn->query($sql);
-			foreach($comments as $key => $value) {
-				echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
-				echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
+			if(!empty($comments)) {
+				foreach($comments as $key => $value) {
+					echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
+					echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
+				}
+			}
+			else {
+				echo 'There are no comments yet.';
 			}
 			echo '<br>';	
 		}
@@ -189,7 +202,7 @@ echo '<div id="my_craft_firm" class="toggle" style="display:' . $my_craft_firm_d
 if(!isset($_REQUEST['action']) || $_REQUEST['action'] != 'my_craft_firm') {
 	$sql = "SELECT * from user INNER JOIN service_provider ON user.user_id = service_provider.fk_user_id INNER JOIN occupation ON occupation.occupation_id = service_provider.fk_occupation_id WHERE user.user_id = " . (int)$_SESSION['user']['user_id'] . "";
 	$res = $conn->query($sql);
-	if(isset($res)) {
+	if(isset($res[0])) {
 		$values =  $res[0];
 		$mch = [];
 		if(preg_match('/^(\d+):(\d+)[\s-]+(\d+):(\d+)$/', $values['working_hours'], $mch)) {

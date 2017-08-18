@@ -24,6 +24,7 @@ function search_engine($form_search_engine) {
 		$cities = array();
 		$service_providers = array();
 		$lat_lng = array();
+		$marker_content = array();
 		array_push($lat_lng, array('lat' => (float)$_GET['lat'], 'lng' => (float)$_GET['lng']));
 		foreach($data as $key => $value) {
 			array_push($categories, $value['category']);
@@ -37,9 +38,10 @@ function search_engine($form_search_engine) {
 				$value['filename'] = 'no_picture.png';
 			array_push($service_providers, array('sp_id' => $value['sp_id'] ,'user_id' => $value['user_id'],'name' => $value['name'], 'surname' => $value['surname'], 'work_address' => $value['work_address'], 'city' => $value['city'], 'country' => $value['country'], 'filename' => $value['filename'], 'distance' => $value['distance']));
 			array_push($lat_lng, array('lat' => (float)$value['lat'], 'lng' => (float)$value['lng']));
+			array_push($marker_content, array('name' => $value['name'], 'surname' => $value['surname'], 'work_address' => $value['work_address'], 'city' => $value['city'], 'country' => $value['country'], 'distance' => (string)round($value['distance'], 2), 'category' => $value['category'], 'type' => $value['type']));
 		}
-		$lat_lng_json = json_encode($lat_lng);
-		echo '<div id="lat_lng" data-latlng=' . $lat_lng_json . '></div>';
+		echo '<div id="lat_lng" data-latlng=' . htmlentities(json_encode($lat_lng)) . '></div>';
+		echo '<div id="marker_content" data-content="' . htmlentities(json_encode($marker_content)) . '"></div>';
 		$str =  $no_location_str;
 		$str .= '<b>Your search:</b><br>';
 		$str .= 'Category: ';

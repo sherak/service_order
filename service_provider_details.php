@@ -13,6 +13,10 @@ $conn = new db_connection();
 $_SESSION['previous_location_search_engine'] = $_SERVER['REQUEST_URI'];
 
 if(isset($_GET['sp_id'])) {
+	if(isset($_SESSION['user']))
+		echo '<a href="my_account.php">Home</a><br>';
+	else
+		echo '<a href="index.php">Home</a><br>';
 	$sp_id = $_GET['sp_id'];
 	$_SESSION['sp_id'] = $sp_id;
 	if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'add_comment_and_evaluate') {
@@ -78,27 +82,40 @@ if(isset($_GET['sp_id'])) {
     echo '<a href="#purchase">Purchase</a>&nbsp;';
 	echo '</div>';
 
-	$general_str = 'Work details: ' . $profile_details['details'] . '<br>';
-	$general_str .= 'Work experience: ' . $profile_details['experience'] . '<br>'; 
-	$purchase_str = 'Service: ' . $profile_details['service'] . '<br>';
-	$purchase_str .= 'Price: ' . $profile_details['price'] . '<br>'; 
+	$general_str = '<b>Work details: </b><br>' . $profile_details['details'] . '<br>';
+	$general_str .= '<b>Work experience: </b><br>' . $profile_details['experience'] . '<br>'; 
+	$purchase_str = '<b>Service: </b>' . $profile_details['service'] . '<br>';
+	$purchase_str .= '<b>Price: </b>' . $profile_details['price'] . '<br>'; 
 
 	echo '<div id="general" class="toggle" style="display:block">' . $general_str . '</div>'; 
 	$sql = "SELECT * FROM post WHERE fk_sp_id = '$sp_id'";
 	$posts = $conn->query($sql);
 	echo '<div id="posts" class="toggle" style="display:none">';
-	foreach($posts as $key => $value) 
-		echo 'Content: ' . $value['content'] . ' Date: ' . $value['datetime'] . '<br>';
+	foreach($posts as $key => $value) {
+		echo '<i>Content:</i> ' . $value['content'] . '<br><i>Date:</i> ' . $value['datetime'] . ' ';
+		$sql = "SELECT count(*) cnt FROM likes WHERE fk_post_id = " . $value['post_id'] . "";
+		$num_likes = $conn->query($sql)[0]['cnt'];
+		if($num_likes == 1)
+			echo $num_likes . ' <i>like</i><br>';
+		else
+			echo $num_likes . ' <i>likes</i><br>';	
+	}
 	echo '</div>';
 	echo '<div id="purchase" class="toggle" style="display:none">' . $purchase_str . '</div>';	
 
 	echo '<br><b>Comments</b><br>';
-	$sql = "SELECT * FROM comment INNER JOIN user ON user.user_id = comment.fk_user_id WHERE comment.fk_sp_id = '$sp_id'";
+	$sql = "SELECT * FROM comment INNER JOIN user ON user.user_id = comment.fk_user_id WHERE comment.fk_sp_id = '$sp_id' AND comment.stars IS NOT NULL";
 	$comments = $conn->query($sql);
-	foreach ($comments as $key => $value) {
-		echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
-		echo 'Content: ' . $value['content'] . ' Evaluation: ' . $value['stars'] . ' Date: ' . $value['datetime'] . '<br>';
+	if(!empty($comments)) {
+		foreach ($comments as $key => $value) {
+			echo '<b>' . $value['name'] . ' ' . $value['surname'] . '</b> ';
+			echo 'Content: ' . $value['content'] . ' Evaluation: ' . $value['stars'] . ' Date: ' . $value['datetime'] . '<br>';
+		}	
 	}
+	else {
+		echo 'There are no comments yet.';
+	}
+
 	if(isset($_SESSION['user']))
 		echo $form_add_comment_and_evaluate->get_html($_SERVER['REQUEST_URI'] . '&action=add_comment_and_evaluate');
 	else

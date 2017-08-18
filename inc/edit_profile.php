@@ -15,6 +15,9 @@ function edit_profile($form_edit_profile) {
     'gender' => $gender
   ];
 
+  $user = $_SESSION['user'];
+  $user_id = $user['user_id'];
+  
   if(!empty($_FILES['profile_picture']['name'])) {
     move_uploaded_file($_FILES['profile_picture']['tmp_name'], "img/profile_pictures/" . $_FILES['profile_picture']['name']);
 
@@ -25,15 +28,12 @@ function edit_profile($form_edit_profile) {
       unlink("img/profile_pictures/" . $filename);
       $sql = "DELETE FROM images WHERE fk_user_id = " . (int)$user_id;
     }
-
+    echo $user_id;
     $conn->insert_data('images', [
       'filename' => $_FILES['profile_picture']['name'],
       'fk_user_id' => $user_id
     ]);
   }
-
-  $user = $_SESSION['user'];
-  $user_id = $user['user_id'];
 
   if(!empty($_POST['password']) || !empty($_POST['password_rpt'])) {
     if($_POST['password'] == $_POST['password_rpt'])

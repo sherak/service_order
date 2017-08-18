@@ -1,10 +1,11 @@
 $(function() {
 
 	var markers = $("#lat_lng").data('latlng');
+	var contents = $("#marker_content").data('content');
 
 	if(markers != undefined) {
 		var options = {
-			zoom: 6,
+			zoom:6,
 	     	center:markers[0] 		
 		}
 
@@ -20,15 +21,21 @@ $(function() {
 				});
 			}
 			else {
-				addMarker({coords:markers[i]});
+				addMarker({
+					coords:markers[i],
+					content:'<h6>' + contents[i - 1]['name'] + ' ' + contents[i - 1]['surname'] + '<br>' +
+					contents[i - 1]['category'] + ', ' + contents[i - 1]['type'] + '<br>' + 
+					contents[i - 1]['work_address'] + ', ' + contents[i - 1]['city'] + ', ' + contents[i - 1]['country'] + '<br>' +
+					'Distance ' + contents[i - 1]['distance'] + ' km</h6>'
+				});
 			}
 		}
 	}
 
 	function addMarker(props) {
 		var marker = new google.maps.Marker({
-			position: props.coords,
-			map: map
+			position:props.coords,
+			map:map
 		});
 
 		if(props.iconImage) {
@@ -37,7 +44,7 @@ $(function() {
 
 		if(props.content) {
 			var infoWindow = new google.maps.InfoWindow({
-				content: props.content
+				content:props.content
 			});
 		}
 

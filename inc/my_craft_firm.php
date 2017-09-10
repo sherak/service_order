@@ -25,7 +25,7 @@ function my_craft_firm($form_my_craft_firm) {
 	$conn = new db_connection();
 	$sql = "SELECT * FROM service_provider WHERE (work_address = '$work_address' OR phone_number = '$phone_number') AND   fk_user_id != " . (int)$user_id . "";
 	if(!empty($conn->query($sql))) {
-	   	$form_my_craft_firm->set_error('phone_number', 'Given Work Address or Phone Number have already been taken.');
+	   	$form_my_craft_firm->set_error('phone_number', '<div class="alert alert-danger" role="alert">Given Work Address or Phone Number have already been taken.</div>');
 	}
 	else {
 		$url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($work_address) . '&key=AIzaSyD6ajZUdUGEsQFUQKxHR1l_y4xsdGDKjdw';
@@ -51,7 +51,7 @@ function my_craft_firm($form_my_craft_firm) {
 			}
 		}
 		else {
-			$form_my_craft_firm->set_error('work_address', 'Enter a valid work_address.');
+			$form_my_craft_firm->set_error('work_address', '<div class="alert alert-danger" role="alert">Enter a valid work_address.</div>');
 		}
 	}
 	if(!$form_my_craft_firm->check_errors()) {

@@ -47,13 +47,13 @@
             { "name":"my_craft_firm_btn", "label":"", "value":"Open/Edit", "type":"submit" }
     ],
     "service_price": [
-        { "name":"service", "label":"Service (optional)", "value":"", "type":"text", "required":false },
-        { "name":"price", "label":"Price (optional)", "value":"", "type":"number", "required":false },
+        { "name":"service", "label":"Service", "value":"", "type":"text", "required":true },
+        { "name":"price", "label":"Price", "value":"", "type":"number", "required":true },
         { "name":"service_price_btn", "label":"", "value":"Add", "type":"submit" }  
     ],
     "add_comment_and_evaluate": [
             { "name":"content", "label":"Content", "value":"", "type":"text", "required":true },
-            { "name":"stars", "label":"", "value":"", "type":"radio", "required":true, "values": { "1": "Poor", "2": "Fair", "3": "Average", "4": "Good", "5": "Excellent"} },
+            { "name":"stars", "type":"radio", "label":"", "value":"" },
             { "name":"add_comment_and_evaluate_btn", "label":"", "value":"Comment and evaluate", "type":"submit" }
     ],
     "add_comment": [

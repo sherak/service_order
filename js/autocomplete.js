@@ -36,19 +36,5 @@ $(function() {
 	fldTerm.autocomplete({
   		source: pathname + '?action=ac_term'
 	});
-/*
-	var ,
-		latlng = new google.maps.LatLng(-34.397, 150.644);
-
-	function codeAddress() {
-		var address = document.getElementById('address').value;
-		geocoder.geocode({'address':address }, function(results, status){
-		if(status == 'OK') {
-			console.log('Geocode OK', results[0].geometry.location);
-		} else {
-			alert('Geocode was not successful for the following reason: ' + status);
-		}
-		});
-	}
-*/
 });
+

@@ -3,6 +3,21 @@ $(function() {
 	var markers = $("#lat_lng").data('latlng');
 	var contents = $("#marker_content").data('content');
 
+	var options = {
+			zoom:6,
+	     	center:new google.maps.LatLng(45.815399, 15.966568)		
+	}
+
+	var map = new
+		google.maps.Map(document.getElementById('map'), options);
+
+	var center = map.getCenter();
+
+	$(".nav li a").on('click', function() { 
+		google.maps.event.trigger(map, 'resize');
+		map.setCenter(center);
+	});
+
 	if(markers != undefined) {
 		var options = {
 			zoom:6,
@@ -35,7 +50,7 @@ $(function() {
 	function addMarker(props) {
 		var marker = new google.maps.Marker({
 			position:props.coords,
-			map:map
+			map:map,
 		});
 
 		if(props.iconImage) {

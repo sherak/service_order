@@ -4,9 +4,10 @@ session_start();
 
 $_SESSION['previous_location'] = 'index.php';
 
-require 'inc/html_form.php';
-require 'inc/form_process.php';
-require 'inc/search_engine.php';
+if(isset($_SESSION['user']))
+	header("Location: logout.php");
+
+include_once 'inc/db_connection.php';
 
 $conn = new db_connection();
 
@@ -41,17 +42,25 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'register') {
 	handle_register($form_register);
 }
 
+$search_result_html = '';
+
 if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'search_engine') {
 	$form_search_engine->set_values($_REQUEST);
-	search_engine($form_search_engine);
+	$search_result_html = search_engine($form_search_engine);
 }
 
-echo '<b>Login</b><br>';
-echo $form_login->get_html('index.php?action=login');
 
-echo '<br><b>Register</b><br>';
-echo $form_register->get_html('index.php?action=register');
+echo '<div id="search">';
+echo '<h3>Search service providers</h3>';
+echo $form_search_engine->get_html('', 'index.php?action=search_engine', 'get');
+echo '<div id="map"></div>';
+echo '</div>';
 
-echo '<br><b>Search service providers</b><br>';
-echo $form_search_engine->get_html('index.php?action=search_engine', 'get');
+echo $search_result_html;
 
+echo '<div class="register">';
+echo '<h3>Register</h3>';
+echo $form_register->get_html('', 'index.php?action=register');
+echo '</div>';
+
+include 'footer.php';

@@ -1,0 +1,511 @@
+@import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+
+fieldset, label { margin: 0; padding: 0; }
+
+.rating { 
+  border: none;
+  float: left;
+}
+
+.rating > input { display: none; } 
+.rating > label:before { 
+  margin: 5px;
+  font-size: 1.25em;
+  font-family: FontAwesome;
+  display: inline-block;
+  content: "\f005";
+}
+
+.rating > .half:before { 
+  content: "\f089";
+  position: absolute;
+}
+
+.rating > label { 
+  color: #ddd; 
+ float: right; 
+}
+
+.rating > input:checked ~ label, 
+.rating:not(:checked) > label:hover, 
+.rating:not(:checked) > label:hover ~ label { color: #FFD700;  } 
+
+.rating > input:checked + label:hover, 
+.rating > input:checked ~ label:hover,
+.rating > label:hover ~ input:checked ~ label, 
+.rating > input:checked ~ label:hover ~ label { color: #FFED85;  } 
+
+.stars_color {
+	font-size: 20px;
+	color: yellow;
+}
+
+.stars {
+	font-size: 20px;
+}
+
+.stars_color_search {
+	font-size: 15px;
+	color: yellow;
+}
+
+.stars_search {
+	font-size: 15px;
+}
+
+body {
+	background-color: #f6f6f6;
+}
+
+img {
+    border: 1px solid #cfcfcf;
+    border-radius: 4px;
+    padding: 4px;
+    height: auto; 
+    width: auto; 
+    max-width: 250px; 
+    max-height: 250px;
+}
+
+.like_img {
+	width: 30px;
+	height: 30px;
+	border: 0px;
+}
+
+.notif_alert_img {
+	position: absolute;
+	left: 112px;
+	width: 20px;
+	height: 20px;
+	border: 0px;
+	border-radius: 50%;
+}
+
+.delete_row_img {
+	width: 30px;
+	height: 30px;
+	border: 0px;
+}
+
+.search_col {
+    width: 200px;
+}
+
+.search_thumb {
+    height: 353px;
+}
+
+.search_img {
+	margin-top: 10px;
+    border: 1px solid #cfcfcf;
+    border-radius: 4px;
+    padding: 4px;
+    height: auto; 
+    width: auto; 
+    max-width: 150px; 
+    max-height: 95px;
+}
+
+.search_caption {
+}
+
+.search_p {
+	margin-left: 5px;
+	height: 160px;
+	font-size: 12px;
+}
+
+.show_profile_link {
+	margin-left: 20px;
+}
+
+.navbar .container-fluid .navbar-header {
+	margin-left: 35px;
+}
+
+.navbar .container-fluid .collapse .navbar-form {
+	margin-right: 5px;
+}
+
+.navbar .container-fluid .collapse #logout_link {
+	margin-right: 35px;
+}
+
+.navbar .container {
+	margin: auto;
+    width: 50%;
+    padding: 15px;
+    text-align: center;
+    color: #fff;
+}
+
+#body-wrap { 
+	position: relative;
+	min-height: 100vh; 
+	box-sizing: border-box; 
+	padding-bottom: 100px;
+}
+
+.footer {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	margin: 0;
+	margin-bottom: -100px;
+}
+
+#logout_link {
+	float: right;
+}
+
+#my_profile {
+	display: inline-block;
+	vertical-align: top;
+	margin-left: 50px;
+	width: 250px;
+}
+
+#my_profile_nav {
+	width: 250px;	
+}
+
+#news_feed {
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 60px;
+	margin-left: 50px;
+	width: 900px;
+}
+
+#my_posts {
+	position: absolute;
+	top: 132px;
+	right: 70px;
+	width: 440px;
+}
+
+#my_post_alert {
+	margin-left: 10px;
+}
+
+#my_post_open_firm_alert {
+	margin: 0;
+	width: 400px;
+}
+
+#followers {
+	width: 440px;
+}
+
+#follow_alert {
+	width: 270px;
+}
+
+#news_feed_follow_alert {
+	margin-left: 10px;
+	width: 410px;
+}
+
+div.toggle.hidden { display:none; }
+
+#edit_profile {
+	display: inline-block;
+	vertical-align: top;
+	margin-left: 50px;
+	width: 440px;
+}
+
+#search .search_form {
+	display: inline-block;
+	vertical-align: top;
+	width: 350px;
+}
+
+#search #search_results {
+	display: inline-block;
+	vertical-align: top;
+	width: 440px;
+}
+
+#lat_lng, #marker_content { display:none; }
+
+#my_craft_firm {
+	display: inline-block;
+	vertical-align: top;
+	margin-left: 50px;
+	width: 440px;
+}
+
+#service_price {
+	position: absolute;
+	top: 72px;
+	right: 210px;
+	width: 300px;
+}
+
+#name_surname {
+	display: inline-block;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	color: #fff;
+}
+
+.register {
+	float: right;
+	margin-left: 40px;
+	margin-bottom: 40px;
+	margin-right: 50px;
+}
+
+#register_alert_email {
+	width: 265px;
+}
+
+#register_alert_pass {
+	width: 265px;
+}
+
+#register_alert_success {
+	width: 265px;
+}
+
+#login_alert {
+	position: absolute;
+	top: 50px;
+	right: 325px;
+	width: 195px;
+}
+
+#search {
+	display: inline-block;
+	vertical-align: top;
+	margin-left: 50px;
+	margin-bottom: 40px;
+	margin-right: 40px;
+}
+
+.search_results {
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 25px;
+	width: 604px;
+	height: 680px;
+}
+
+#search_panel {
+	margin-bottom: 10px;
+}
+
+.pagination {
+	margin: 0px;
+	margin-left: 236px;	
+}
+
+.news_feed_pag {
+	margin: 0px;
+	margin-left: 150px;	
+}
+
+.spd_pag {
+	margin-left: 160px;	
+	margin-bottom: 20px;
+}
+
+.form-control {
+	width: 265px;
+}
+
+.alert {
+	margin-top: 10px;
+	width: 50%;
+}
+
+.location-alert {
+	margin-top: 20px;
+	width: 300px;
+}
+
+#map {
+	margin-top: 20px;
+	height: 300px;
+	width: 300px;
+	border: 1px solid #cfcfcf;
+	border-radius: 4px;
+}
+
+.profile_map {
+	position: absolute;
+	top: 172px;
+	right: 130px;
+}
+
+.nav.nav-pills {
+	border: 1px solid #cfcfcf;
+	border-radius: 5px;
+	width: 19.2%;
+}
+
+#profile_details_row {
+	display: inline-block;
+	vertical-align: top;
+	margin-left: 35px;
+	width: 300px;
+}
+
+#profile_options {     
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 58px;     
+	margin-left: 50px;     
+	height: 375px;   
+}
+
+#profile_nav {
+	width: 258px;
+}
+
+.profile_panel {
+	margin-top: 20px;
+	width: 500px;
+}
+
+#general {
+	height: 313px;
+}
+
+#posts {
+	height: 313px;
+}
+
+#order_online {
+	height: 313px;
+}
+
+#post_alert {
+	margin-left: 10px;
+	width: 400px;
+}
+
+#comment_panel {
+	display: block;
+	vertical-align: top;
+	margin-top: 20px;
+	margin-left: 370px;
+	width: 500px;
+}
+
+#comment_alert {
+	margin-left: 10px;
+	width: 400px;
+}
+
+#comment_signin_alert {
+	width: 500px;
+}
+
+.comments_link {
+	margin-bottom: 10px;
+}
+
+.add_comment {
+	margin-bottom: 9px;
+}
+
+.add_comment_and_evaluate {
+	
+}
+
+.follow-notif-alert {
+	margin: 5px;
+	width: 150px;
+}
+
+.comment-notif-alert {
+	margin: 5px;
+	width: 150px;
+}
+
+.span_notif_alert {
+	font-size: 13px;
+}
+
+.followers-box {
+	margin-top: 5px;
+	margin-right: 20px;
+}
+
+
+.notification-box {
+	margin-top: 5px;
+	margin-right: 20px;
+}
+
+.followers-text {
+	margin: 5px;
+}
+
+.purchase_link {
+	float: right;
+	margin-top: -20px;
+}
+
+.purchase_alert {
+	margin: 0;
+	margin-top: -40px;
+	margin-left: 300px;
+	width: 150px;
+}
+
+#shopping_cart {
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 58px;
+	margin-left: 50px;
+	width: 680px;
+}
+
+.shopping_cart_alert {
+	width: 100%;
+	text-align: center;
+}
+
+.offers_alert {
+	margin: 10px;
+	width: 475px;
+}
+
+.checkout_box {
+	float: right;
+}
+
+.add_offer_alert {
+	width: 265px;
+}
+
+.comment-success {
+	width: 500px;
+}
+
+#my_offers {
+	position: absolute;
+	top: 390px;
+	right: 210px;
+	width: 300px;
+}
+
+.my_craft_firm_pag {
+	margin-left: 80px;
+}
+
+.payment-alert {
+	margin-top: 70px;
+	margin-left: 500px;
+	width: 190px;
+}
+
+#my_offers_alert {
+	margin-left: 10px;
+	width: 280px;
+}

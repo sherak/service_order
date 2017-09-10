@@ -11,8 +11,8 @@ function handle_login($form_login) {
 	if(!empty($sql)) 
 		$_SESSION['user'] = $sql[0];
 	else 
-		$form_login->set_error('password', 'Invalid email or password.');
-
+		$form_login->set_error('email', 'Invalid email or password.');
+		echo '<div id="login_alert" class="alert alert-danger" role="alert">Invalid email or password.</div>';
 
 	if(!$form_login->check_errors()) 
 		header("Location: my_account.php");
@@ -31,17 +31,17 @@ function handle_register($form_register) {
 
 		$sql = "SELECT * FROM user WHERE email = '$email'";
 		$row = $conn->query($sql); 
-		if(!empty($row)) {
-			$form_register->set_error('email', 'Email is already registered.');
-		}
-		if($password != $password_rpt) {
-	   		$form_register->set_error('password', 'Entered password and repeated password are not the same.');
-		}
-
+		if(!empty($row)) 
+			$form_register->set_error('email', '<div id="register_alert_email" class="alert alert-danger" role="alert">Email is already registered.</div>');
+		
+		if($password != $password_rpt) 
+	   		$form_register->set_error('password_rpt', '<div id="register_alert_pass" class="alert alert-danger" role="alert">Entered password and repeated password are not the same.</div>');
+	
 		if(!$form_register->check_errors())  {
 			$data = array("name" => $name, "surname" => $surname, "email" => $email, "password" => $password, "gender" => $gender);
 			$conn->insert_data('user', $data);
-			$form_register->set_success_msg('Register success.');
+			$form_register->set_success_msg('<div id="register_alert_success" class="alert alert-success" role="alert">Register success.</div>');
 		}
 	}
 }
+
